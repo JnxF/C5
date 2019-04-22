@@ -5,6 +5,8 @@ using System;
 
 namespace C5
 {
+#pragma warning disable IDE0060 // Remove unused parameter
+
     /// <summary>
     /// A read-only wrapper for a generic list collection
     /// <i>Suitable as a wrapper for LinkedList, HashedLinkedList, ArrayList and HashedArray.
@@ -19,9 +21,9 @@ namespace C5
     {
         #region Fields
 
-        IList<T> innerlist;
-        GuardedList<T> underlying;
-        bool slidableView = false;
+        readonly IList<T> innerlist;
+        readonly GuardedList<T> underlying;
+        readonly bool slidableView = false;
 
         #endregion
 
@@ -130,11 +132,11 @@ namespace C5
         public void InsertLast(T item)
         { throw new ReadOnlyCollectionException("List is read only"); }
 
-        /// <summary>
-        /// </summary>
-        /// <exception cref="ReadOnlyCollectionException"> since this is a read-only wrapper</exception>
-        /// <param name="item"></param>
-        /// <param name="target"></param>
+                               /// <summary>
+                               /// </summary>
+                               /// <exception cref="ReadOnlyCollectionException"> since this is a read-only wrapper</exception>
+                               /// <param name="item"></param>
+                               /// <param name="target"></param>
         public void InsertBefore(T item, T target)
         { throw new ReadOnlyCollectionException("List is read only"); }
 
@@ -516,7 +518,7 @@ namespace C5
         }
 
         [Obsolete]
-        Object System.Collections.ICollection.SyncRoot
+        object System.Collections.ICollection.SyncRoot
         {
             get { return innerlist.SyncRoot; }
         }
@@ -534,7 +536,7 @@ namespace C5
 
         #region System.Collections.IList Members
 
-        Object System.Collections.IList.this[int index]
+        object System.Collections.IList.this[int index]
         {
             get { return this[index]; }
             set
@@ -543,27 +545,27 @@ namespace C5
             }
         }
 
-        int System.Collections.IList.Add(Object o)
+        int System.Collections.IList.Add(object o)
         {
             throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
         }
 
-        bool System.Collections.IList.Contains(Object o)
+        bool System.Collections.IList.Contains(object o)
         {
             return Contains((T)o);
         }
 
-        int System.Collections.IList.IndexOf(Object o)
+        int System.Collections.IList.IndexOf(object o)
         {
             return Math.Max(-1, IndexOf((T)o));
         }
 
-        void System.Collections.IList.Insert(int index, Object o)
+        void System.Collections.IList.Insert(int index, object o)
         {
             throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
         }
 
-        void System.Collections.IList.Remove(Object o)
+        void System.Collections.IList.Remove(object o)
         {
             throw new ReadOnlyCollectionException("Collection cannot be modified through this guard object");
         }
@@ -575,5 +577,6 @@ namespace C5
 
         #endregion
     }
+#pragma warning restore IDE0060 // Remove unused parameter
 
 }

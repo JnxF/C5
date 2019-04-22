@@ -38,8 +38,11 @@ namespace C5
 
         private Node[] path = new Node[2];
 
+
         //TODO: refactor into separate class
+#pragma warning disable IDE0044 // Add readonly modifier
         bool isSnapShot = false;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         int generation;
 
@@ -245,11 +248,11 @@ namespace C5
         internal class Enumerator : SCG.IEnumerator<T>
         {
             #region Private Fields
-            TreeSet<T> tree;
+            readonly TreeSet<T> tree;
 
             bool valid = false;
 
-            int stamp;
+            readonly int stamp;
 
             T current;
 
@@ -304,7 +307,7 @@ namespace C5
             /// <returns>True if enumerator is valid now</returns>
             public bool MoveNext()
             {
-                tree.modifycheck(stamp);
+                tree.Modifycheck(stamp);
                 if (cursor.right != null)
                 {
                     path[level] = cursor = cursor.right;
@@ -398,8 +401,7 @@ namespace C5
             TreeSet<T> tree;
 
             bool valid = false;
-
-            int stamp;
+            readonly int stamp;
 
 
             T current;
@@ -438,7 +440,7 @@ namespace C5
             /// <returns>True if enumerator is valid now</returns>
             public bool MoveNext()
             {
-                tree.modifycheck(stamp);//???
+                tree.Modifycheck(stamp);//???
 
 
                 Node next = tree.right(cursor);
@@ -518,31 +520,31 @@ namespace C5
 
         #region IEnumerable<T> Members
 
-        private SCG.IEnumerator<T> getEnumerator(Node node, int origstamp)
+        private SCG.IEnumerator<T> GetEnumerator(Node node, int origstamp)
         {
             if (node == null)
                 yield break;
 
             if (node.left != null)
             {
-                SCG.IEnumerator<T> child = getEnumerator(node.left, origstamp);
+                SCG.IEnumerator<T> child = GetEnumerator(node.left, origstamp);
 
                 while (child.MoveNext())
                 {
-                    modifycheck(origstamp);
+                    Modifycheck(origstamp);
                     yield return child.Current;
                 }
             }
 
-            modifycheck(origstamp);
+            Modifycheck(origstamp);
             yield return node.item;
             if (node.right != null)
             {
-                SCG.IEnumerator<T> child = getEnumerator(node.right, origstamp);
+                SCG.IEnumerator<T> child = GetEnumerator(node.right, origstamp);
 
                 while (child.MoveNext())
                 {
-                    modifycheck(origstamp);
+                    Modifycheck(origstamp);
                     yield return child.Current;
                 }
             }
@@ -816,14 +818,14 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             //Note: blackdepth of the tree is set inside addIterative
             T jtem = default;
             if (!add(item, ref jtem))
                 return false;
             if (ActiveEvents != 0)
-                raiseForAdd(jtem);
+                RaiseForAdd(jtem);
             return true;
         }
 
@@ -863,7 +865,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             int c = 0;
             T j = default;
@@ -885,9 +887,9 @@ namespace C5
             //TODO: implement a RaiseForAddAll() method
             if (raiseAdded)
                 foreach (T item in wasAdded)
-                    raiseItemsAdded(item, 1);
+                    RaiseItemsAdded(item, 1);
             if (((ActiveEvents & EventTypeEnum.Changed) != 0))
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
 
@@ -907,8 +909,8 @@ namespace C5
             {
                 if (!isValid)
                     throw new ViewDisposedException("Snapshot has been disposed");
-                updatecheck();
-                addSorted(items, true, true);
+                Updatecheck();
+                AddSorted(items, true, true);
             }
         }
 
@@ -966,7 +968,7 @@ namespace C5
         }
 
 
-        void addSorted(SCG.IEnumerable<T> items, bool safe, bool raise)
+        void AddSorted(SCG.IEnumerable<T> items, bool safe, bool raise)
         {
             SCG.IEnumerator<T> e = items.GetEnumerator(); ;
             if (size > 0)
@@ -1021,10 +1023,10 @@ namespace C5
                     foreach (T item in this)
                         wasAdded.Enqueue(item);
                     foreach (T item in wasAdded)
-                        raiseItemsAdded(item, 1);
+                        RaiseItemsAdded(item, 1);
                 }
                 if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                    raiseCollectionChanged();
+                    RaiseCollectionChanged();
             }
             return;
         }
@@ -1124,14 +1126,14 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             //Note: blackdepth of the tree is set inside addIterative
             if (addIterative(item, ref item, false, out bool wasfound))
             {
                 size++;
                 if (ActiveEvents != 0 && !wasfound)
-                    raiseForAdd(item);
+                    RaiseForAdd(item);
                 return wasfound;
             }
             else
@@ -1170,7 +1172,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
             stackcheck();
 
             int level = 0;
@@ -1197,7 +1199,7 @@ namespace C5
                     root = cursor;
 
                     if (ActiveEvents != 0)
-                        raiseForUpdate(item, olditem);
+                        RaiseForUpdate(item, olditem);
 
                     return true;
                 }
@@ -1222,7 +1224,8 @@ namespace C5
         /// <returns>True if the item was found and updated (hence not added).</returns>
         public bool UpdateOrAdd(T item)
         {
-            return UpdateOrAdd(item, out _); }
+            return UpdateOrAdd(item, out _);
+        }
 
         /// <summary>
         /// 
@@ -1234,7 +1237,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
             olditem = default;
 
 
@@ -1243,13 +1246,13 @@ namespace C5
             {
                 size++;
                 if (ActiveEvents != 0)
-                    raiseForAdd(wasfound ? olditem : item);
+                    RaiseForAdd(wasfound ? olditem : item);
                 return wasfound;
             }
             else
             {
                 if (ActiveEvents != 0)
-                    raiseForUpdate(item, olditem, 1);
+                    RaiseForUpdate(item, olditem, 1);
                 return true;
             }
         }
@@ -1265,12 +1268,12 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
             if (root == null)
                 return false;
             bool retval = removeIterative(ref item, out _);
             if (ActiveEvents != 0 && retval)
-                raiseForRemove(item);
+                RaiseForRemove(item);
             return retval;
         }
 
@@ -1288,13 +1291,13 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
             removeditem = item;
             if (root == null)
                 return false;
             bool retval = removeIterative(ref removeditem, out _);
             if (ActiveEvents != 0 && retval)
-                raiseForRemove(item);
+                RaiseForRemove(item);
             return retval;
         }
 
@@ -1634,15 +1637,15 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             int oldsize = size;
             clear();
             if ((ActiveEvents & EventTypeEnum.Cleared) != 0)
-                raiseCollectionCleared(true, oldsize);
+                RaiseCollectionCleared(true, oldsize);
             if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
 
@@ -1663,7 +1666,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             T jtem;
 
@@ -1692,7 +1695,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             //A much more efficient version is possible if items is sorted like this.
             //Well, it is unclear how efficient it would be.
@@ -1739,9 +1742,9 @@ namespace C5
             blackdepth = t.blackdepth;
             if (wasRemoved != null)
                 foreach (KeyValuePair<T, int> p in wasRemoved)
-                    raiseItemsRemoved(p.Key, p.Value);
+                    RaiseItemsRemoved(p.Key, p.Value);
             if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
         /// <summary>
@@ -1954,7 +1957,7 @@ namespace C5
 
         #region IIndexed<T> Members
 
-        private Node findNode(int i)
+        private Node FindNode(int i)
         {
             if (isSnapShot)
                 throw new NotSupportedException("Indexing not supported for snapshots");
@@ -1989,7 +1992,7 @@ namespace C5
         /// </summary>
         /// <value>The i'th item of this list.</value>
         /// <param name="i">the index to lookup</param>
-        public T this[int i] { get { return findNode(i).item; } }
+        public T this[int i] { get { return FindNode(i).item; } }
 
         /// <summary>
         /// 
@@ -2079,10 +2082,10 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
             T retval = removeAt(i);
             if (ActiveEvents != 0)
-                raiseForRemove(retval);
+                RaiseForRemove(retval);
             return retval;
         }
 
@@ -2090,7 +2093,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
             if (i < 0 || i >= size)
                 throw new IndexOutOfRangeException("Index out of range for sequenced collectionvalue");
 
@@ -2149,7 +2152,7 @@ namespace C5
             if (start < 0 || count < 0 || start + count > this.size)
                 throw new ArgumentOutOfRangeException();
 
-            updatecheck();
+            Updatecheck();
 
             if (count == 0)
                 return;
@@ -2162,9 +2165,9 @@ namespace C5
                 removeAt(start);
 
             if ((ActiveEvents & EventTypeEnum.Cleared) != 0)
-                raiseCollectionCleared(false, count);
+                RaiseCollectionCleared(false, count);
             if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
 
@@ -2178,7 +2181,7 @@ namespace C5
         {
             get
             {
-                checkRange(start, count);
+                CheckRange(start, count);
                 return new Interval(this, start, count, true);
             }
         }
@@ -2219,7 +2222,7 @@ namespace C5
 
             public override SCG.IEnumerator<T> GetEnumerator()
             {
-                tree.modifycheck(stamp);
+                tree.Modifycheck(stamp);
 
                 Node cursor = tree.root;
                 Node[] path = new Node[2 * tree.blackdepth];
@@ -2260,7 +2263,7 @@ namespace C5
                     while (totaltogo-- > 0)
                     {
                         yield return current;
-                        tree.modifycheck(stamp);
+                        tree.Modifycheck(stamp);
 
                         if (cursor.right != null)
                         {
@@ -2309,7 +2312,7 @@ namespace C5
                     while (totaltogo-- > 0)
                     {
                         yield return current;
-                        tree.modifycheck(stamp);
+                        tree.Modifycheck(stamp);
 
                         if (cursor.left != null)
                         {
@@ -2402,7 +2405,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             //persistence guard?
             if (size == 0)
@@ -2414,8 +2417,8 @@ namespace C5
             T retval = deleteMin();
             if (ActiveEvents != 0)
             {
-                raiseItemsRemoved(retval, 1);
-                raiseCollectionChanged();
+                RaiseItemsRemoved(retval, 1);
+                RaiseCollectionChanged();
             }
             return retval;
         }
@@ -2471,7 +2474,7 @@ namespace C5
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
             //persistence guard?
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 throw new NoSuchItemException();
 
@@ -2481,8 +2484,8 @@ namespace C5
             T retval = deleteMax();
             if (ActiveEvents != 0)
             {
-                raiseItemsRemoved(retval, 1);
-                raiseCollectionChanged();
+                RaiseItemsRemoved(retval, 1);
+                RaiseCollectionChanged();
             }
             return retval;
         }
@@ -2820,7 +2823,7 @@ namespace C5
 
 
         //Utility for CountXxxx. Actually always called with strict = true.
-        private int countTo(T item, bool strict)
+        private int CountTo(T item, bool strict)
         {
             if (isSnapShot)
                 throw new NotSupportedException("Indexing not supported for snapshots");
@@ -2964,7 +2967,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            return size - countTo(bot, true);
+            return size - CountTo(bot, true);
         }
 
 
@@ -2981,7 +2984,7 @@ namespace C5
             if (comparer.Compare(bot, top) >= 0)
                 return 0;
 
-            return countTo(top, true) - countTo(bot, true);
+            return CountTo(top, true) - CountTo(bot, true);
         }
 
 
@@ -2994,7 +2997,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            return countTo(top, true);
+            return CountTo(top, true);
         }
 
 
@@ -3006,7 +3009,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             int count = CountFrom(low);
 
@@ -3023,9 +3026,9 @@ namespace C5
                     wasRemoved.Enqueue(item);
             }
             if (wasRemoved != null)
-                raiseForRemoveAll(wasRemoved);
+                RaiseForRemoveAll(wasRemoved);
             else if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
 
@@ -3038,7 +3041,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             int count = CountFromTo(low, hi);
 
@@ -3054,9 +3057,9 @@ namespace C5
                     wasRemoved.Enqueue(item);
             }
             if (wasRemoved != null)
-                raiseForRemoveAll(wasRemoved);
+                RaiseForRemoveAll(wasRemoved);
             else if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
 
@@ -3068,7 +3071,7 @@ namespace C5
         {
             if (!isValid)
                 throw new ViewDisposedException("Snapshot has been disposed");
-            updatecheck();
+            Updatecheck();
 
             int count = CountTo(hi);
 
@@ -3085,9 +3088,9 @@ namespace C5
                     wasRemoved.Enqueue(item);
             }
             if (wasRemoved != null)
-                raiseForRemoveAll(wasRemoved);
+                RaiseForRemoveAll(wasRemoved);
             else if ((ActiveEvents & EventTypeEnum.Changed) != 0)
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
         #endregion
@@ -3209,15 +3212,13 @@ namespace C5
         [Serializable]
         internal class Range : DirectedCollectionValueBase<T>, IDirectedCollectionValue<T>
         {
-            //We actually need exclusive upper and lower bounds, and flags to 
-            //indicate whether the bound is present (we canot rely on default(T))
-            private int stamp, size;
+            private readonly int stamp;
+            private readonly int size;
+            private readonly TreeSet<T> basis;
 
-            private TreeSet<T> basis;
+            private readonly T lowend, highend;
 
-            private T lowend, highend;
-
-            private bool haslowend, hashighend;
+            private readonly bool haslowend, hashighend;
 
             EnumerationDirection direction;
 
@@ -3263,7 +3264,7 @@ namespace C5
 
                 private Range range;
 
-                private bool forwards;
+                private readonly bool forwards;
 
                 #endregion
                 public Enumerator(Range range)
@@ -3277,11 +3278,11 @@ namespace C5
                         cursor.right = range.basis.root;
                     else
                         cursor.left = range.basis.root;
-                    range.basis.modifycheck(range.stamp);
+                    range.basis.Modifycheck(range.stamp);
                 }
 
 
-                int compare(T i1, T i2) { return comparer.Compare(i1, i2); }
+                int Compare(T i1, T i2) { return comparer.Compare(i1, i2); }
 
 
                 /// <summary>
@@ -3313,7 +3314,7 @@ namespace C5
                 /// <returns>True if enumerator is valid now</returns>
                 public bool MoveNext()
                 {
-                    range.basis.modifycheck(range.stamp);
+                    range.basis.Modifycheck(range.stamp);
                     if (!ready)
                         return false;
 
@@ -3324,7 +3325,7 @@ namespace C5
                             cursor = cursor.right;
                             while (cursor != null)
                             {
-                                int comp = compare(cursor.item, range.lowend);
+                                int comp = Compare(cursor.item, range.lowend);
 
                                 if (comp > 0)
                                 {
@@ -3371,7 +3372,7 @@ namespace C5
                             cursor = path[--level];
 
                         current = cursor.item;
-                        if (range.hashighend && compare(current, range.highend) >= 0)
+                        if (range.hashighend && Compare(current, range.highend) >= 0)
                             return valid = ready = false;
 
 
@@ -3384,7 +3385,7 @@ namespace C5
                             cursor = cursor.left;
                             while (cursor != null)
                             {
-                                int comp = compare(cursor.item, range.highend);
+                                int comp = Compare(cursor.item, range.highend);
 
                                 if (comp < 0)
                                 {
@@ -3426,7 +3427,7 @@ namespace C5
                             cursor = path[--level];
 
                         current = cursor.item;
-                        if (range.haslowend && compare(current, range.lowend) < 0)
+                        if (range.haslowend && Compare(current, range.lowend) < 0)
                             return valid = ready = false;
 
 
@@ -3483,20 +3484,20 @@ namespace C5
 
             #region Utility
 
-            bool inside(T item)
-            {
-                return (!haslowend || basis.comparer.Compare(item, lowend) >= 0) && (!hashighend || basis.comparer.Compare(item, highend) < 0);
-            }
+            //bool inside(T item)
+            //{
+            //    return (!haslowend || basis.comparer.Compare(item, lowend) >= 0) && (!hashighend || basis.comparer.Compare(item, highend) < 0);
+            //}
 
 
-            void checkstamp()
-            {
-                if (stamp < basis.stamp)
-                    throw new CollectionModifiedException();
-            }
+            //void checkstamp()
+            //{
+            //    if (stamp < basis.stamp)
+            //        throw new CollectionModifiedException();
+            //}
 
 
-            void syncstamp() { stamp = basis.stamp; }
+            // void syncstamp() { stamp = basis.stamp; }
 
             #endregion
 
@@ -3603,7 +3604,7 @@ namespace C5
         /// <param name="n">Place (used for id display)</param>
         /// <param name="m">Message</param>
         /// <returns>b</returns>
-        bool massert(bool b, Node n, string m)
+        bool Massert(bool b, Node n, string m)
         {
             if (!b) Logger.Log(string.Format("*** Node (item={0}, id={1}): {2}", n.item,
               0
@@ -3617,12 +3618,12 @@ namespace C5
         {//Red-Black invariant
             bool res = true;
 
-            res = massert(!(n.red && redp), n, "RED parent of RED node") && res;
-            res = massert(n.left == null || n.right != null || n.left.red, n, "Left child black, but right child empty") && res;
-            res = massert(n.right == null || n.left != null || n.right.red, n, "Right child black, but left child empty") && res;
+            res = Massert(!(n.red && redp), n, "RED parent of RED node") && res;
+            res = Massert(n.left == null || n.right != null || n.left.red, n, "Left child black, but right child empty") && res;
+            res = Massert(n.right == null || n.left != null || n.right.red, n, "Right child black, but left child empty") && res;
             bool sb = n.size == (n.left == null ? 0 : n.left.size) + (n.right == null ? 0 : n.right.size) + 1;
 
-            res = massert(sb, n, "Bad size") && res;
+            res = Massert(sb, n, "Bad size") && res;
             min = max = n.item;
 
             T otherext;
@@ -3631,16 +3632,16 @@ namespace C5
             if (n.left != null)
             {
                 res = rbminicheck(n.left, n.red, out min, out otherext, out lbh) && res;
-                res = massert(comparer.Compare(n.item, otherext) > 0, n, "Value not > all left children") && res;
+                res = Massert(comparer.Compare(n.item, otherext) > 0, n, "Value not > all left children") && res;
             }
 
             if (n.right != null)
             {
                 res = rbminicheck(n.right, n.red, out otherext, out max, out rbh) && res;
-                res = massert(comparer.Compare(n.item, otherext) < 0, n, "Value not < all right children") && res;
+                res = Massert(comparer.Compare(n.item, otherext) < 0, n, "Value not < all right children") && res;
             }
 
-            res = massert(rbh == lbh, n, "Different blackheights of children") && res;
+            res = Massert(rbh == lbh, n, "Different blackheights of children") && res;
             blackheight = n.red ? rbh : rbh + 1;
             return res;
         }
@@ -3662,7 +3663,7 @@ namespace C5
             if (child != null)
             {
                 res = rbminisnapcheck(child, out lsz, out min, out otherext) && res;
-                res = massert(comparer.Compare(n.item, otherext) > 0, n, "Value not > all left children") && res;
+                res = Massert(comparer.Compare(n.item, otherext) > 0, n, "Value not > all left children") && res;
             }
 
 
@@ -3670,7 +3671,7 @@ namespace C5
             if (child != null)
             {
                 res = rbminisnapcheck(child, out rsz, out otherext, out max) && res;
-                res = massert(comparer.Compare(n.item, otherext) < 0, n, "Value not < all right children") && res;
+                res = Massert(comparer.Compare(n.item, otherext) < 0, n, "Value not < all right children") && res;
             }
 
             size = 1 + lsz + rsz;
@@ -3720,13 +3721,13 @@ namespace C5
                     //Logger.Log("Im'a snapshot");
                     bool rv = rbminisnapcheck(root, out int thesize, out _, out _);
 
-                    rv = massert(size == thesize, root, "bad snapshot size") && rv;
+                    rv = Massert(size == thesize, root, "bad snapshot size") && rv;
                     return !rv;
                 }
                 bool res = rbminicheck(root, false, out _, out _, out int blackheight);
-                res = massert(blackheight == blackdepth, root, "bad blackh/d") && res;
-                res = massert(!root.red, root, "root is red") && res;
-                res = massert(root.size == size, root, "count!=root.size") && res;
+                res = Massert(blackheight == blackdepth, root, "bad blackh/d") && res;
+                res = Massert(!root.red, root, "root is red") && res;
+                res = Massert(root.size == size, root, "count!=root.size") && res;
                 return !res;
             }
             else

@@ -15,7 +15,7 @@ namespace C5
     {
         #region Fields
 
-        ISortedDictionary<K, V> sorteddict;
+        readonly ISortedDictionary<K, V> sorteddict;
 
         #endregion
 

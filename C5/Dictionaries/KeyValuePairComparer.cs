@@ -12,7 +12,7 @@ namespace C5
     [Serializable]
     public class KeyValuePairComparer<K, V> : SCG.IComparer<KeyValuePair<K, V>>
     {
-        SCG.IComparer<K> comparer;
+        readonly SCG.IComparer<K> comparer;
 
 
         /// <summary>

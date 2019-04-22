@@ -14,7 +14,7 @@ namespace C5
     {
         #region Fields
 
-        IEnumerator<T> enumerator;
+        readonly IEnumerator<T> enumerator;
 
         #endregion
 

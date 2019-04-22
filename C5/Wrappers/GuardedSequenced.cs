@@ -15,7 +15,7 @@ namespace C5
     {
         #region Fields
 
-        ISequenced<T> sequenced;
+        readonly ISequenced<T> sequenced;
 
         #endregion
 

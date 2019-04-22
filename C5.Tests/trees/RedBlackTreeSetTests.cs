@@ -6,6 +6,7 @@ using C5;
 using NUnit.Framework;
 using SCG = System.Collections.Generic;
 
+#pragma warning disable IDE1006 // Naming Styles
 namespace C5UnitTests.trees.TreeSet
 {
     using CollectionOfInt = TreeSet<int>;
@@ -1834,16 +1835,16 @@ namespace C5UnitTests.trees.TreeSet
 
             private SCG.IComparer<int> ic;
 
-            private bool eq(SCG.IEnumerable<int> me, int[] that)
-            {
-                int i = 0, maxind = that.Length - 1;
+            //private bool eq(SCG.IEnumerable<int> me, int[] that)
+            //{
+            //    int i = 0, maxind = that.Length - 1;
 
-                foreach (int item in me)
-                    if (i > maxind || ic.Compare(item, that[i++]) != 0)
-                        return false;
+            //    foreach (int item in me)
+            //        if (i > maxind || ic.Compare(item, that[i++]) != 0)
+            //            return false;
 
-                return true;
-            }
+            //    return true;
+            //}
 
             [SetUp]
             public void Init()
@@ -1938,7 +1939,7 @@ namespace C5UnitTests.trees.TreeSet
     {
         internal class CubeRoot : IComparable<int>
         {
-            private int c;
+            private readonly int c;
 
 
             internal CubeRoot(int c) { this.c = c; }
@@ -1952,7 +1953,7 @@ namespace C5UnitTests.trees.TreeSet
 
         class Interval : IComparable<int>
         {
-            private int b, t;
+            private readonly int b, t;
 
 
             internal Interval(int b, int t) { this.b = b; this.t = t; }
@@ -2539,7 +2540,7 @@ namespace C5UnitTests.trees.TreeSet
         {
             private TreeSet<int> tree;
             private readonly Object mySyncRoot = new Object();
-            int sz = 5000;
+            readonly int sz = 5000;
 
 
             [Test]
@@ -2654,8 +2655,7 @@ namespace C5UnitTests.trees.TreeSet
         public class ConcurrentQueries
         {
             private TreeSet<int> tree;
-
-            int sz = 500000;
+            readonly int sz = 500000;
 
 
             [SetUp]
@@ -2673,8 +2673,7 @@ namespace C5UnitTests.trees.TreeSet
             class A
             {
                 public int count = 0;
-
-                TreeSet<int> t;
+                readonly TreeSet<int> t;
 
 
                 public A(TreeSet<int> t) { this.t = t; }
@@ -2923,3 +2922,4 @@ namespace C5UnitTests.trees.TreeSet
 
     }
 }
+#pragma warning restore IDE1006 // Naming Styles

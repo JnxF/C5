@@ -84,7 +84,7 @@ namespace C5
 
         #region Fields
 
-        ICollectionValue<T> collectionvalue;
+        readonly ICollectionValue<T> collectionvalue;
 
         #endregion
 

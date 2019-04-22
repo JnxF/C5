@@ -55,7 +55,7 @@ namespace C5
         ///  if the range does not fit within collection size.</exception>
         /// <param name="start">start of range</param>
         /// <param name="count">size of range</param>
-        protected void checkRange(int start, int count)
+        protected void CheckRange(int start, int count)
         {
             if (start < 0 || count < 0 || start + count > size)
                 throw new ArgumentOutOfRangeException();
@@ -222,7 +222,7 @@ namespace C5
         /// <exception cref="CollectionModifiedException"> if this collection has been updated 
         /// since a target time</exception>
         /// <param name="thestamp">The stamp identifying the target time</param>
-        protected virtual void modifycheck(int thestamp)
+        protected virtual void Modifycheck(int thestamp)
         {
             if (this.stamp != thestamp)
                 throw new CollectionModifiedException();
@@ -233,7 +233,7 @@ namespace C5
         /// Check if it is valid to perform update operations, and if so increment stamp.
         /// </summary>
         /// <exception cref="ReadOnlyCollectionException">If collection is read-only</exception>
-        protected virtual void updatecheck()
+        protected virtual void Updatecheck()
         {
             if (isReadOnlyBase)
                 throw new ReadOnlyCollectionException();

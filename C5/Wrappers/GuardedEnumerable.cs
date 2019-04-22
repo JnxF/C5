@@ -16,7 +16,7 @@ namespace C5
     {
         #region Fields
 
-        System.Collections.Generic.IEnumerable<T> enumerable;
+        readonly System.Collections.Generic.IEnumerable<T> enumerable;
 
         #endregion
 

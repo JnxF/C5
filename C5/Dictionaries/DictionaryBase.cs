@@ -17,8 +17,7 @@ namespace C5
         /// The set collection of entries underlying this dictionary implementation
         /// </summary>
         protected ICollection<KeyValuePair<K, V>> pairs;
-
-        SCG.IEqualityComparer<K> keyequalityComparer;
+        readonly SCG.IEqualityComparer<K> keyequalityComparer;
 
         #region Events
         ProxyEventBlock<KeyValuePair<K, V>> eventBlock;
@@ -196,7 +195,7 @@ namespace C5
         [Serializable]
         class LiftedEnumerable<H> : SCG.IEnumerable<KeyValuePair<K, V>> where H : K
         {
-            SCG.IEnumerable<H> keys;
+            readonly SCG.IEnumerable<H> keys;
             public LiftedEnumerable(SCG.IEnumerable<H> keys) { this.keys = keys; }
             public SCG.IEnumerator<KeyValuePair<K, V>> GetEnumerator() { foreach (H key in keys) yield return new KeyValuePair<K, V>(key); }
 
@@ -335,7 +334,7 @@ namespace C5
         [Serializable]
         internal class ValuesCollection : CollectionValueBase<V>, ICollectionValue<V>
         {
-            ICollection<KeyValuePair<K, V>> pairs;
+            readonly ICollection<KeyValuePair<K, V>> pairs;
 
 
             internal ValuesCollection(ICollection<KeyValuePair<K, V>> pairs)
@@ -361,7 +360,7 @@ namespace C5
         [Serializable]
         internal class KeysCollection : CollectionValueBase<K>, ICollectionValue<K>
         {
-            ICollection<KeyValuePair<K, V>> pairs;
+            readonly ICollection<KeyValuePair<K, V>> pairs;
 
 
             internal KeysCollection(ICollection<KeyValuePair<K, V>> pairs)

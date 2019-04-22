@@ -15,7 +15,7 @@ namespace C5
     {
         #region Fields
 
-        IDirectedCollectionValue<T> directedcollection;
+        readonly IDirectedCollectionValue<T> directedcollection;
 
         #endregion
 

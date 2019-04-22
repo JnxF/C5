@@ -15,7 +15,7 @@ namespace C5
     {
         #region Fields
 
-        IIndexedSorted<T> indexedsorted;
+        readonly IIndexedSorted<T> indexedsorted;
 
         #endregion
 

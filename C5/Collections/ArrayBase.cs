@@ -28,9 +28,9 @@ namespace C5
         /// <summary>
         /// Double the size of the internal array.
         /// </summary>
-        protected virtual void expand()
+        protected virtual void Expand()
         {
-            expand(checked(2 * array.Length), size);
+            Expand(checked(2 * array.Length), size);
         }
 
 
@@ -40,7 +40,7 @@ namespace C5
         /// <param name="newcapacity">The new size of the internal array - 
         /// will be rounded upwards to a power of 2.</param>
         /// <param name="newsize">The (new) size of the (base) collection.</param>
-        protected virtual void expand(int newcapacity, int newsize)
+        protected virtual void Expand(int newcapacity, int newsize)
         {
             System.Diagnostics.Debug.Assert(newcapacity >= newsize);
 
@@ -65,7 +65,7 @@ namespace C5
         protected virtual void InsertProtected(int i, T item)
         {
             if (size == array.Length)
-                expand();
+                Expand();
 
             if (i < size)
                 Array.Copy(array, i, array, i + 1, size - i);
@@ -107,7 +107,7 @@ namespace C5
         {
             get
             {
-                checkRange(start, count);
+                CheckRange(start, count);
                 return new Range(this, start, count, true);
             }
         }
@@ -120,7 +120,7 @@ namespace C5
         /// </summary>
         public virtual void Clear()
         {
-            updatecheck();
+            Updatecheck();
             array = new T[8];
             size = 0;
         }
@@ -197,7 +197,7 @@ namespace C5
 
             for (int i = thestart; i < theend; i++)
             {
-                modifycheck(thestamp);
+                Modifycheck(thestamp);
                 yield return array[i];
             }
         }
@@ -210,9 +210,11 @@ namespace C5
         [Serializable]
         protected class Range : DirectedCollectionValueBase<T>, IDirectedCollectionValue<T>
         {
-            int start, count, delta, stamp;
-
-            ArrayBase<T> thebase;
+            private int start;
+            private readonly int count;
+            private int delta;
+            private readonly int stamp;
+            readonly ArrayBase<T> thebase;
 
 
             internal Range(ArrayBase<T> thebase, int start, int count, bool forwards)
@@ -227,7 +229,7 @@ namespace C5
             /// </summary>
             /// <exception cref="CollectionModifiedException">if underlying collection has been modified.</exception>
             /// <value>True if this collection is empty.</value>
-            public override bool IsEmpty { get { thebase.modifycheck(stamp); return count == 0; } }
+            public override bool IsEmpty { get { thebase.Modifycheck(stamp); return count == 0; } }
 
 
             /// <summary>
@@ -235,7 +237,7 @@ namespace C5
             /// </summary>
             /// <exception cref="CollectionModifiedException">if underlying collection has been modified.</exception>
             /// <value>The number of items in the range</value>
-            public override int Count { get { thebase.modifycheck(stamp); return count; } }
+            public override int Count { get { thebase.Modifycheck(stamp); return count; } }
 
             /// <summary>
             /// The value is symbolic indicating the type of asymptotic complexity
@@ -245,7 +247,7 @@ namespace C5
             /// <value>A characterization of the speed of the 
             /// <exception cref="CollectionModifiedException">if underlying collection has been modified.</exception>
             /// <code>Count</code> property in this collection.</value>
-            public override Speed CountSpeed { get { thebase.modifycheck(stamp); return Speed.Constant; } }
+            public override Speed CountSpeed { get { thebase.Modifycheck(stamp); return Speed.Constant; } }
 
             /// <summary>
             /// Choose some item of this collection. 
@@ -255,7 +257,7 @@ namespace C5
             /// <returns></returns>
             public override T Choose()
             {
-                thebase.modifycheck(stamp);
+                thebase.Modifycheck(stamp);
                 if (count == 0)
                     throw new NoSuchItemException();
                 return thebase.array[start];
@@ -271,7 +273,7 @@ namespace C5
             {
                 for (int i = 0; i < count; i++)
                 {
-                    thebase.modifycheck(stamp);
+                    thebase.Modifycheck(stamp);
                     yield return thebase.array[start + delta * i];
                 }
             }
@@ -285,7 +287,7 @@ namespace C5
             /// <returns>The mirrored collection.</returns>
             public override IDirectedCollectionValue<T> Backwards()
             {
-                thebase.modifycheck(stamp);
+                thebase.Modifycheck(stamp);
 
                 Range res = (Range)MemberwiseClone();
 
@@ -310,7 +312,7 @@ namespace C5
             {
                 get
                 {
-                    thebase.modifycheck(stamp);
+                    thebase.Modifycheck(stamp);
                     return delta > 0 ? EnumerationDirection.Forwards : EnumerationDirection.Backwards;
                 }
             }

@@ -8,7 +8,9 @@ namespace C5
     [Serializable]
     abstract class MappedDirectedCollectionValue<T, V> : DirectedCollectionValueBase<V>, IDirectedCollectionValue<V>
     {
+#pragma warning disable IDE0044 // Add readonly modifier
         IDirectedCollectionValue<T> directedcollectionvalue;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         abstract public V Map(T item);
 

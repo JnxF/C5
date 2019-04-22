@@ -16,7 +16,7 @@ namespace C5
     {
         #region Fields
 
-        ICollection<T> collection;
+        readonly ICollection<T> collection;
 
         #endregion
 

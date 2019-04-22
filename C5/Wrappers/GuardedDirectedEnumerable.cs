@@ -15,7 +15,7 @@ namespace C5
     {
         #region Fields
 
-        IDirectedEnumerable<T> directedenumerable;
+        readonly IDirectedEnumerable<T> directedenumerable;
 
         #endregion
 

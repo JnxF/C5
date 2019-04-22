@@ -41,7 +41,7 @@ namespace C5
         /// <param name="rest"></param>
         /// <param name="formatProvider"></param>
         /// <returns>True if <code>obj</code> was shown completely.</returns>
-        public static bool Show(Object obj, StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
+        public static bool Show(object obj, StringBuilder stringbuilder, ref int rest, IFormatProvider formatProvider)
         {
             if (rest <= 0)
                 return false;
@@ -60,9 +60,9 @@ namespace C5
         /// <param name="format"></param>
         /// <param name="formatProvider"></param>
         /// <returns></returns>
-        public static String ShowString(IShowable showable, String format, IFormatProvider formatProvider)
+        public static string ShowString(IShowable showable, string format, IFormatProvider formatProvider)
         {
-            int rest = maxLength(format);
+            int rest = MaxLength(format);
             StringBuilder sb = new StringBuilder();
             showable.Show(sb, ref rest, formatProvider);
             return sb.ToString();
@@ -73,7 +73,7 @@ namespace C5
         /// </summary>
         /// <param name="format"></param>
         /// <returns></returns>
-        static int maxLength(String format)
+        static int MaxLength(string format)
         {
             //TODO: validate format string
             if (format == null)

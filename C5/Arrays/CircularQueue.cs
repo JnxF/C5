@@ -26,7 +26,9 @@ namespace C5
         /// The internal container array is doubled when necessary, but never shrinked.
         /// </summary>
         T[] array;
+#pragma warning disable IDE0044 // Add readonly modifier
         bool forwards = true, original = true;
+#pragma warning restore IDE0044 // Add readonly modifier
         #endregion
 
         #region Events
@@ -40,7 +42,7 @@ namespace C5
         #endregion
 
         #region Util
-        void expand()
+        void Expand()
         {
             int newlength = 2 * array.Length;
             T[] newarray = new T[newlength];
@@ -116,13 +118,13 @@ namespace C5
             if (!original)
                 throw new ReadOnlyCollectionException();
             stamp++;
-            if (size == array.Length - 1) expand();
+            if (size == array.Length - 1) Expand();
             size++;
             int oldback = back++;
             if (back == array.Length) back = 0;
             array[oldback] = item;
             if (ActiveEvents != 0)
-                raiseForAdd(item);
+                RaiseForAdd(item);
         }
 
         /// <summary>
@@ -142,7 +144,7 @@ namespace C5
             T retval = array[oldfront];
             array[oldfront] = default;
             if (ActiveEvents != 0)
-                raiseForRemove(retval);
+                RaiseForRemove(retval);
             return retval;
         }
 
@@ -155,13 +157,13 @@ namespace C5
             if (!original)
                 throw new ReadOnlyCollectionException();
             stamp++;
-            if (size == array.Length - 1) expand();
+            if (size == array.Length - 1) Expand();
             size++;
             int oldback = back++;
             if (back == array.Length) back = 0;
             array[oldback] = item;
             if (ActiveEvents != 0)
-                raiseForAdd(item);
+                RaiseForAdd(item);
         }
 
         /// <summary>
@@ -181,7 +183,7 @@ namespace C5
             T retval = array[back];
             array[back] = default;
             if (ActiveEvents != 0)
-                raiseForRemove(retval);
+                RaiseForRemove(retval);
             return retval;
         }
         #endregion

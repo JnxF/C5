@@ -20,9 +20,11 @@ namespace C5
         {
             internal InnerList(T[] array) { this.array = array; size = array.Length; }
         }
-        ArrayList<T> innerlist;
+
+        readonly ArrayList<T> innerlist;
+
         //TODO: remember a ref to the wrapped array in WrappedArray to save a little on indexing?
-        WrappedArray<T> underlying;
+        readonly WrappedArray<T> underlying;
 
         /// <summary>
         /// 
@@ -837,7 +839,7 @@ namespace C5
         }
 
         [Obsolete]
-        Object System.Collections.ICollection.SyncRoot
+        object System.Collections.ICollection.SyncRoot
         {
             get { return ((System.Collections.IList)innerlist).SyncRoot; }
         }
@@ -855,35 +857,35 @@ namespace C5
 
         #region System.Collections.IList Members
 
-        Object System.Collections.IList.this[int index]
+        object System.Collections.IList.this[int index]
         {
             get { return this[index]; }
             set { this[index] = (T)value; }
         }
 
-        int System.Collections.IList.Add(Object o)
+        int System.Collections.IList.Add(object o)
         {
             bool added = Add((T)o);
             // What position to report if item not added? SC.IList.Add doesn't say
             return added ? Count - 1 : -1;
         }
 
-        bool System.Collections.IList.Contains(Object o)
+        bool System.Collections.IList.Contains(object o)
         {
             return Contains((T)o);
         }
 
-        int System.Collections.IList.IndexOf(Object o)
+        int System.Collections.IList.IndexOf(object o)
         {
             return Math.Max(-1, IndexOf((T)o));
         }
 
-        void System.Collections.IList.Insert(int index, Object o)
+        void System.Collections.IList.Insert(int index, object o)
         {
             Insert(index, (T)o);
         }
 
-        void System.Collections.IList.Remove(Object o)
+        void System.Collections.IList.Remove(object o)
         {
             Remove((T)o);
         }

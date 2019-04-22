@@ -23,7 +23,7 @@ namespace C5UnitTests.support
                 public string this[int i] { get { return array[i]; } set { array[i] = value; } }
 
 
-                public int thesize { get { return size; } set { size = value; } }
+                public int Thesize { get { return size; } set { size = value; } }
             }
 
 
@@ -32,7 +32,7 @@ namespace C5UnitTests.support
             {
                 ABT abt = new ABT
                 {
-                    thesize = 3
+                    Thesize = 3
                 };
                 abt[2] = "aaa";
                 // Assert.IsFalse(abt.Check());
@@ -48,26 +48,26 @@ namespace C5UnitTests.support
         [TestFixture]
         public class Comparers
         {
-            class dbl : IComparable<dbl>
+            class Dbl : IComparable<Dbl>
             {
-                double d;
+                readonly double d;
 
-                public dbl(double din) { d = din; }
+                public Dbl(double din) { d = din; }
 
-                public int CompareTo(dbl that)
+                public int CompareTo(Dbl that)
                 {
                     return d < that.d ? -1 : d == that.d ? 0 : 1;
                 }
-                public bool Equals(dbl that) { return d == that.d; }
+                public bool Equals(Dbl that) { return d == that.d; }
             }
 
             [Test]
             public void GenericC()
             {
-                SCG.IComparer<dbl> h = SCG.Comparer<dbl>.Default;
-                dbl s = new dbl(3.4);
-                dbl t = new dbl(3.4);
-                dbl u = new dbl(7.4);
+                SCG.IComparer<Dbl> h = SCG.Comparer<Dbl>.Default;
+                Dbl s = new Dbl(3.4);
+                Dbl t = new Dbl(3.4);
+                Dbl u = new Dbl(7.4);
 
                 Assert.AreEqual(0, h.Compare(s, t));
                 Assert.IsTrue(h.Compare(s, u) < 0);
@@ -90,14 +90,14 @@ namespace C5UnitTests.support
             [Test]
             public void GenericCViaBuilder()
             {
-                SCG.IComparer<dbl> h = SCG.Comparer<dbl>.Default;
-                dbl s = new dbl(3.4);
-                dbl t = new dbl(3.4);
-                dbl u = new dbl(7.4);
+                SCG.IComparer<Dbl> h = SCG.Comparer<Dbl>.Default;
+                Dbl s = new Dbl(3.4);
+                Dbl t = new Dbl(3.4);
+                Dbl u = new Dbl(7.4);
 
                 Assert.AreEqual(0, h.Compare(s, t));
                 Assert.IsTrue(h.Compare(s, u) < 0);
-                Assert.AreSame(h, SCG.Comparer<dbl>.Default);
+                Assert.AreSame(h, SCG.Comparer<Dbl>.Default);
             }
 
 

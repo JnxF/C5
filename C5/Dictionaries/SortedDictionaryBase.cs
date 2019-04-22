@@ -19,7 +19,7 @@ namespace C5
         /// 
         /// </summary>
         protected ISorted<KeyValuePair<K, V>> sortedpairs;
-        SCG.IComparer<K> keycomparer;
+        readonly SCG.IComparer<K> keycomparer;
 
         /// <summary>
         /// 
@@ -275,7 +275,7 @@ namespace C5
         [Serializable]
         class KeyValuePairComparable : IComparable<KeyValuePair<K, V>>
         {
-            IComparable<K> cutter;
+            readonly IComparable<K> cutter;
 
             internal KeyValuePairComparable(IComparable<K> cutter) { this.cutter = cutter; }
 
@@ -305,11 +305,12 @@ namespace C5
         [Serializable]
         class SortedKeysCollection : SequencedBase<K>, ISorted<K>
         {
-            ISortedDictionary<K, V> sorteddict;
+            readonly ISortedDictionary<K, V> sorteddict;
+
             //TODO: eliminate this. Only problem is the Find method because we lack method on dictionary that also 
             //      returns the actual key.
-            ISorted<KeyValuePair<K, V>> sortedpairs;
-            SCG.IComparer<K> comparer;
+            readonly ISorted<KeyValuePair<K, V>> sortedpairs;
+            readonly SCG.IComparer<K> comparer;
 
             internal SortedKeysCollection(ISortedDictionary<K, V> sorteddict, ISorted<KeyValuePair<K, V>> sortedpairs, SCG.IComparer<K> comparer, SCG.IEqualityComparer<K> itemequalityComparer)
                 : base(itemequalityComparer)

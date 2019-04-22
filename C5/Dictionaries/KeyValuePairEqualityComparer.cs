@@ -12,7 +12,7 @@ namespace C5
     [Serializable]
     public sealed class KeyValuePairEqualityComparer<K, V> : SCG.IEqualityComparer<KeyValuePair<K, V>>
     {
-        SCG.IEqualityComparer<K> keyequalityComparer;
+        readonly SCG.IEqualityComparer<K> keyequalityComparer;
 
 
         /// <summary>

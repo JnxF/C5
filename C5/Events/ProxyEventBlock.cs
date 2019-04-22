@@ -13,7 +13,7 @@ namespace C5
     [Serializable]
     internal sealed class ProxyEventBlock<T>
     {
-        ICollectionValue<T> proxy, real;
+        readonly ICollectionValue<T> proxy, real;
 
         internal ProxyEventBlock(ICollectionValue<T> proxy, ICollectionValue<T> real)
         { this.proxy = proxy; this.real = real; }

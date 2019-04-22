@@ -77,10 +77,10 @@ namespace C5
         /// </para>
         /// </summary>
         /// <exception cref="InvalidOperationException"> if check fails.</exception>
-        protected override void updatecheck()
+        protected override void Updatecheck()
         {
             validitycheck();
-            base.updatecheck();
+            base.Updatecheck();
             if (underlying != null)
                 underlying.stamp++;
         }
@@ -103,7 +103,7 @@ namespace C5
         /// </summary>
         /// <param name="stamp">The stamp indicating the time.</param>
         /// <exception cref="CollectionModifiedException"> if check fails.</exception>
-        protected override void modifycheck(int stamp)
+        protected override void Modifycheck(int stamp)
         {
             validitycheck();
             if ((underlying != null ? underlying.stamp : this.stamp) != stamp)
@@ -542,8 +542,8 @@ namespace C5
         /// </summary>
         struct ViewHandler
         {
-            ArrayList<Position> leftEnds;
-            ArrayList<Position> rightEnds;
+            readonly ArrayList<Position> leftEnds;
+            readonly ArrayList<Position> rightEnds;
             int leftEndIndex, rightEndIndex, leftEndIndex2, rightEndIndex2;
             internal readonly int viewCount;
             internal ViewHandler(LinkedList<T> list)
@@ -649,11 +649,10 @@ namespace C5
         [Serializable]
         class Range : DirectedCollectionValueBase<T>, IDirectedCollectionValue<T>
         {
-            // int start;
-            int count, rangestamp;
-            Node startnode, endnode;
-
-            LinkedList<T> list;
+            private readonly int count;
+            private readonly int rangestamp;
+            private readonly Node startnode, endnode;
+            readonly LinkedList<T> list;
 
             bool forwards;
 
@@ -671,17 +670,17 @@ namespace C5
                 }
             }
 
-            public override bool IsEmpty { get { list.modifycheck(rangestamp); return count == 0; } }
+            public override bool IsEmpty { get { list.Modifycheck(rangestamp); return count == 0; } }
 
-            public override int Count { get { list.modifycheck(rangestamp); return count; } }
+            public override int Count { get { list.Modifycheck(rangestamp); return count; } }
 
 
-            public override Speed CountSpeed { get { list.modifycheck(rangestamp); return Speed.Constant; } }
+            public override Speed CountSpeed { get { list.Modifycheck(rangestamp); return Speed.Constant; } }
 
 
             public override T Choose()
             {
-                list.modifycheck(rangestamp);
+                list.Modifycheck(rangestamp);
                 if (count > 0) return startnode.item;
                 throw new NoSuchItemException();
             }
@@ -690,7 +689,7 @@ namespace C5
             {
                 int togo = count;
 
-                list.modifycheck(rangestamp);
+                list.Modifycheck(rangestamp);
                 if (togo == 0)
                     yield break;
 
@@ -700,7 +699,7 @@ namespace C5
                 while (--togo > 0)
                 {
                     cursor = forwards ? cursor.next : cursor.prev;
-                    list.modifycheck(rangestamp);
+                    list.Modifycheck(rangestamp);
                     yield return cursor.item;
                 }
             }
@@ -708,7 +707,7 @@ namespace C5
 
             public override IDirectedCollectionValue<T> Backwards()
             {
-                list.modifycheck(rangestamp);
+                list.Modifycheck(rangestamp);
 
                 Range b = (Range)MemberwiseClone();
 
@@ -814,7 +813,7 @@ namespace C5
         public virtual bool FIFO
         {
             get { validitycheck(); return fIFO; }
-            set { updatecheck(); fIFO = value; }
+            set { Updatecheck(); fIFO = value; }
         }
 
         /// <summary>
@@ -837,13 +836,13 @@ namespace C5
             get { validitycheck(); return get(index).item; }
             set
             {
-                updatecheck();
+                Updatecheck();
                 Node n = get(index);
                 //
                 T item = n.item;
 
                 n.item = value;
-                (underlying ?? this).raiseForSetThis(index, value, item);
+                (underlying ?? this).RaiseForSetThis(index, value, item);
             }
         }
 
@@ -861,10 +860,10 @@ namespace C5
         /// <param name="item">The item to insert.</param>
         public virtual void Insert(int i, T item)
         {
-            updatecheck();
+            Updatecheck();
             insert(i, i == size ? endsentinel : get(i), item);
             if (ActiveEvents != EventTypeEnum.None)
-                (underlying ?? this).raiseForInsert(i + Offset, item);
+                (underlying ?? this).RaiseForInsert(i + Offset, item);
         }
 
         /// <summary>
@@ -884,7 +883,7 @@ namespace C5
         /// <param name="item"></param>
         public void Insert(IList<T> pointer, T item)
         {
-            updatecheck();
+            Updatecheck();
             if ((pointer == null) || ((pointer.Underlying ?? pointer) != (underlying ?? this)))
                 throw new IncompatibleViewException();
 #warning INEFFICIENT
@@ -909,7 +908,7 @@ namespace C5
 
         void InsertAll(int i, SCG.IEnumerable<T> items, bool insertion)
         {
-            updatecheck();
+            Updatecheck();
             Node succ, node, pred;
             int count = 0;
             succ = i == size ? endsentinel : get(i);
@@ -947,10 +946,10 @@ namespace C5
 #warning must we check stamps here?
                         node = node.next;
                         T item = node.item;
-                        if (insertion) raiseItemInserted(item, j);
-                        raiseItemsAdded(item, 1);
+                        if (insertion) RaiseItemInserted(item, j);
+                        RaiseItemsAdded(item, 1);
                     }
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
             }
         }
 
@@ -960,10 +959,10 @@ namespace C5
         /// <param name="item">The item to insert.</param>
         public virtual void InsertFirst(T item)
         {
-            updatecheck();
+            Updatecheck();
             insert(0, startsentinel.next, item);
             if (ActiveEvents != EventTypeEnum.None)
-                (underlying ?? this).raiseForInsert(0 + Offset, item);
+                (underlying ?? this).RaiseForInsert(0 + Offset, item);
         }
 
         /// <summary>
@@ -972,10 +971,10 @@ namespace C5
         /// <param name="item">The item to insert.</param>
         public virtual void InsertLast(T item)
         {
-            updatecheck();
+            Updatecheck();
             insert(size, endsentinel, item);
             if (ActiveEvents != EventTypeEnum.None)
-                (underlying ?? this).raiseForInsert(size - 1 + Offset, item);
+                (underlying ?? this).RaiseForInsert(size - 1 + Offset, item);
         }
 
         /// <summary>
@@ -1020,7 +1019,7 @@ namespace C5
             while (cursor != endsentinel)
             {
                 V v = mapper(cursor.item);
-                modifycheck(stamp);
+                Modifycheck(stamp);
                 mcursor.next = new LinkedList<V>.Node(v, mcursor, null);
                 cursor = cursor.next;
                 mcursor = mcursor.next;
@@ -1042,12 +1041,12 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T Remove()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 throw new NoSuchItemException("List is empty");
             T item = fIFO ? remove(startsentinel.next, 0) : remove(endsentinel.prev, size - 1);
 
-            (underlying ?? this).raiseForRemove(item);
+            (underlying ?? this).RaiseForRemove(item);
             return item;
         }
 
@@ -1058,14 +1057,14 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T RemoveFirst()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 throw new NoSuchItemException("List is empty");
 
             T item = remove(startsentinel.next, 0);
 
             if (ActiveEvents != EventTypeEnum.None)
-                (underlying ?? this).raiseForRemoveAt(Offset, item);
+                (underlying ?? this).RaiseForRemoveAt(Offset, item);
             return item;
         }
 
@@ -1076,14 +1075,14 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T RemoveLast()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 throw new NoSuchItemException("List is empty");
 
             T item = remove(endsentinel.prev, size - 1);
 
             if (ActiveEvents != EventTypeEnum.None)
-                (underlying ?? this).raiseForRemoveAt(size + Offset, item);
+                (underlying ?? this).RaiseForRemoveAt(size + Offset, item);
             return item;
         }
 
@@ -1097,7 +1096,7 @@ namespace C5
         /// <returns>The new list view.</returns>
         public virtual IList<T> View(int start, int count)
         {
-            checkRange(start, count);
+            CheckRange(start, count);
             validitycheck();
             if (views == null)
                 views = new WeakViewList<LinkedList<T>>();
@@ -1220,7 +1219,7 @@ namespace C5
         /// <returns></returns>
         public virtual bool TrySlide(int offset, int size)
         {
-            updatecheck();
+            Updatecheck();
             if (underlying == null)
                 throw new NotAViewException("List not a view");
 
@@ -1266,7 +1265,7 @@ namespace C5
         /// </summary>
         public virtual void Reverse()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
 
@@ -1314,7 +1313,7 @@ namespace C5
             }
             if (positions != null && size % 2 != 0)
                 mirrorViewSentinelsForReverse(positions, ref poslow, ref poshigh, a, b, size / 2);
-            (underlying ?? this).raiseCollectionChanged();
+            (underlying ?? this).RaiseCollectionChanged();
         }
 
         private void mirrorViewSentinelsForReverse(Position[] positions, ref int poslow, ref int poshigh, Node a, Node b, int i)
@@ -1404,7 +1403,7 @@ namespace C5
         /// <param name="c">The comparer defining the sorting order.</param>
         public virtual void Sort(SCG.IComparer<T> c)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             disposeOverlappingViews(false);
@@ -1465,7 +1464,7 @@ namespace C5
             //assert invariant();
             //assert isSorted();
 
-            (underlying ?? this).raiseCollectionChanged();
+            (underlying ?? this).RaiseCollectionChanged();
         }
 
         private static Node mergeRuns(Node run1, Node run2, SCG.IComparer<T> c)
@@ -1562,7 +1561,7 @@ namespace C5
         /// <param name="rnd">The random source.</param>
         public virtual void Shuffle(Random rnd)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             disposeOverlappingViews(false);
@@ -1577,7 +1576,7 @@ namespace C5
 
                 cursor = cursor.next;
             }
-            (underlying ?? this).raiseCollectionChanged();
+            (underlying ?? this).RaiseCollectionChanged();
         }
 
         #endregion
@@ -1595,7 +1594,7 @@ namespace C5
             get
             {
                 validitycheck();
-                checkRange(start, count);
+                CheckRange(start, count);
                 return new Range(this, start, count, true);
             }
         }
@@ -1646,11 +1645,11 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T RemoveAt(int i)
         {
-            updatecheck();
+            Updatecheck();
             T retval = remove(get(i), i);
 
             if (ActiveEvents != EventTypeEnum.None)
-                (underlying ?? this).raiseForRemoveAt(Offset + i, retval);
+                (underlying ?? this).RaiseForRemoveAt(Offset + i, retval);
             return retval;
         }
 
@@ -1664,8 +1663,8 @@ namespace C5
         {
 
             //Note: this is really almost equaivalent to Clear on a view
-            updatecheck();
-            checkRange(start, count);
+            Updatecheck();
+            CheckRange(start, count);
             if (count == 0)
                 return;
 
@@ -1687,8 +1686,8 @@ namespace C5
         {
             if (ActiveEvents != 0)
             {
-                raiseCollectionCleared(size == 0, count, start);
-                raiseCollectionChanged();
+                RaiseCollectionCleared(size == 0, count, start);
+                RaiseCollectionChanged();
             }
         }
         #endregion
@@ -1805,14 +1804,14 @@ namespace C5
         /// <returns></returns>
         public virtual bool Update(T item, out T olditem)
         {
-            updatecheck();
+            Updatecheck();
 
             if (contains(item, out Node node))
             {
                 olditem = node.item;
                 node.item = item;
 
-                (underlying ?? this).raiseForUpdate(item, olditem);
+                (underlying ?? this).RaiseForUpdate(item, olditem);
                 return true;
             }
 
@@ -1829,7 +1828,7 @@ namespace C5
         /// <returns>True if the item was found (hence not added).</returns>
         public virtual bool FindOrAdd(ref T item)
         {
-            updatecheck();
+            Updatecheck();
 
             if (Find(ref item))
                 return true;
@@ -1855,7 +1854,7 @@ namespace C5
         /// <returns></returns>
         public virtual bool UpdateOrAdd(T item, out T olditem)
         {
-            updatecheck();
+            Updatecheck();
 
             if (Update(item, out olditem))
                 return true;
@@ -1872,7 +1871,7 @@ namespace C5
         /// <returns>True if the item was found (and removed).</returns>
         public virtual bool Remove(T item)
         {
-            updatecheck();
+            Updatecheck();
             int i = 0;
             Node node;
 
@@ -1880,7 +1879,7 @@ namespace C5
             if (!(fIFO ? find(item, ref node, ref i) : dnif(item, ref node, ref i)))
                 return false;
             T removeditem = remove(node, i);
-            (underlying ?? this).raiseForRemove(removeditem);
+            (underlying ?? this).RaiseForRemove(removeditem);
             return true;
         }
 
@@ -1894,7 +1893,7 @@ namespace C5
         /// <returns>True if the item was found (and removed).</returns>
         public virtual bool Remove(T item, out T removeditem)
         {
-            updatecheck();
+            Updatecheck();
             int i = 0;
             Node node;
 
@@ -1906,7 +1905,7 @@ namespace C5
             }
             removeditem = node.item;
             remove(node, i);
-            (underlying ?? this).raiseForRemove(removeditem);
+            (underlying ?? this).RaiseForRemove(removeditem);
             return true;
         }
 
@@ -1923,7 +1922,7 @@ namespace C5
         /// <param name="items">The items to remove.</param>
         public virtual void RemoveAll(SCG.IEnumerable<T> items)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
@@ -1970,59 +1969,59 @@ namespace C5
         /// 
         /// </summary>
         /// <param name="predicate"></param>
-        void RemoveAll(Func<T, bool> predicate)
-        {
-            updatecheck();
-            if (size == 0)
-                return;
-            RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
-            bool mustFire = raiseHandler.MustFire;
+        //void RemoveAll(Func<T, bool> predicate)
+        //{
+        //    Updatecheck();
+        //    if (size == 0)
+        //        return;
+        //    RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
+        //    bool mustFire = raiseHandler.MustFire;
 
-            ViewHandler viewHandler = new ViewHandler(this);
-            int index = 0, removed = 0, myoffset = Offset;
-            Node node = startsentinel.next;
-            while (node != endsentinel)
-            {
-                //pass by a stretch of nodes
-                while (node != endsentinel && !predicate(node.item))
-                {
-                    updatecheck();
-                    node = node.next;
-                    index++;
-                }
-                updatecheck();
-                viewHandler.skipEndpoints(removed, myoffset + index);
-                //Remove a stretch of nodes
-                Node localend = node.prev; //Latest node not to be removed
-                while (node != endsentinel && predicate(node.item))
-                {
-                    updatecheck();
-                    if (mustFire)
-                        raiseHandler.Remove(node.item);
-                    removed++;
-                    node = node.next;
-                    index++;
-                    viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
-                }
-                updatecheck();
-                viewHandler.updateSentinels(myoffset + index, localend, node);
-                localend.next = node;
-                node.prev = localend;
-            }
-            index = underlying != null ? underlying.size + 1 - myoffset : size + 1 - myoffset;
-            viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
-            size -= removed;
-            if (underlying != null)
-                underlying.size -= removed;
-            raiseHandler.Raise();
-        }
+        //    ViewHandler viewHandler = new ViewHandler(this);
+        //    int index = 0, removed = 0, myoffset = Offset;
+        //    Node node = startsentinel.next;
+        //    while (node != endsentinel)
+        //    {
+        //        //pass by a stretch of nodes
+        //        while (node != endsentinel && !predicate(node.item))
+        //        {
+        //            Updatecheck();
+        //            node = node.next;
+        //            index++;
+        //        }
+        //        Updatecheck();
+        //        viewHandler.skipEndpoints(removed, myoffset + index);
+        //        //Remove a stretch of nodes
+        //        Node localend = node.prev; //Latest node not to be removed
+        //        while (node != endsentinel && predicate(node.item))
+        //        {
+        //            Updatecheck();
+        //            if (mustFire)
+        //                raiseHandler.Remove(node.item);
+        //            removed++;
+        //            node = node.next;
+        //            index++;
+        //            viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
+        //        }
+        //        Updatecheck();
+        //        viewHandler.updateSentinels(myoffset + index, localend, node);
+        //        localend.next = node;
+        //        node.prev = localend;
+        //    }
+        //    index = underlying != null ? underlying.size + 1 - myoffset : size + 1 - myoffset;
+        //    viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
+        //    size -= removed;
+        //    if (underlying != null)
+        //        underlying.size -= removed;
+        //    raiseHandler.Raise();
+        //}
 
         /// <summary>
         /// Remove all items from this collection.
         /// </summary>
         public virtual void Clear()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             int oldsize = size;
@@ -2057,7 +2056,7 @@ namespace C5
         /// <param name="items">The items to retain.</param>
         public virtual void RetainAll(SCG.IEnumerable<T> items)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
@@ -2105,52 +2104,52 @@ namespace C5
         /// 
         /// </summary>
         /// <param name="predicate"></param>
-        void RetainAll(Func<T, bool> predicate)
-        {
-            updatecheck();
-            if (size == 0)
-                return;
-            RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
-            bool mustFire = raiseHandler.MustFire;
+        //void RetainAll(Func<T, bool> predicate)
+        //{
+        //    Updatecheck();
+        //    if (size == 0)
+        //        return;
+        //    RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
+        //    bool mustFire = raiseHandler.MustFire;
 
-            ViewHandler viewHandler = new ViewHandler(this);
-            int index = 0, removed = 0, myoffset = Offset;
-            Node node = startsentinel.next;
-            while (node != endsentinel)
-            {
-                //Skip a stretch of nodes
-                while (node != endsentinel && predicate(node.item))
-                {
-                    updatecheck();
-                    node = node.next;
-                    index++;
-                }
-                updatecheck();
-                viewHandler.skipEndpoints(removed, myoffset + index);
-                //Remove a stretch of nodes
-                Node localend = node.prev; //Latest node not to be removed
-                while (node != endsentinel && !predicate(node.item))
-                {
-                    updatecheck();
-                    if (mustFire)
-                        raiseHandler.Remove(node.item);
-                    removed++;
-                    node = node.next;
-                    index++;
-                    viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
-                }
-                updatecheck();
-                viewHandler.updateSentinels(myoffset + index, localend, node);
-                localend.next = node;
-                node.prev = localend;
-            }
-            index = underlying != null ? underlying.size + 1 - myoffset : size + 1 - myoffset;
-            viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
-            size -= removed;
-            if (underlying != null)
-                underlying.size -= removed;
-            raiseHandler.Raise();
-        }
+        //    ViewHandler viewHandler = new ViewHandler(this);
+        //    int index = 0, removed = 0, myoffset = Offset;
+        //    Node node = startsentinel.next;
+        //    while (node != endsentinel)
+        //    {
+        //        //Skip a stretch of nodes
+        //        while (node != endsentinel && predicate(node.item))
+        //        {
+        //            Updatecheck();
+        //            node = node.next;
+        //            index++;
+        //        }
+        //        Updatecheck();
+        //        viewHandler.skipEndpoints(removed, myoffset + index);
+        //        //Remove a stretch of nodes
+        //        Node localend = node.prev; //Latest node not to be removed
+        //        while (node != endsentinel && !predicate(node.item))
+        //        {
+        //            Updatecheck();
+        //            if (mustFire)
+        //                raiseHandler.Remove(node.item);
+        //            removed++;
+        //            node = node.next;
+        //            index++;
+        //            viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
+        //        }
+        //        Updatecheck();
+        //        viewHandler.updateSentinels(myoffset + index, localend, node);
+        //        localend.next = node;
+        //        node.prev = localend;
+        //    }
+        //    index = underlying != null ? underlying.size + 1 - myoffset : size + 1 - myoffset;
+        //    viewHandler.updateViewSizesAndCounts(removed, myoffset + index);
+        //    size -= removed;
+        //    if (underlying != null)
+        //        underlying.size -= removed;
+        //    raiseHandler.Raise();
+        //}
 
         /// <summary>
         /// Check if this collection contains all the values in another collection
@@ -2193,7 +2192,7 @@ namespace C5
             while (cursor != endsentinel)
             {
                 bool found = filter(cursor.item);
-                modifycheck(stamp);
+                Modifycheck(stamp);
                 if (found)
                 {
                     mcursor.next = new Node(cursor.item, mcursor, null);
@@ -2266,7 +2265,7 @@ namespace C5
         public virtual void RemoveAllCopies(T item)
         {
 
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
@@ -2347,7 +2346,7 @@ namespace C5
 
             while (cursor != endsentinel)
             {
-                modifycheck(enumeratorstamp);
+                Modifycheck(enumeratorstamp);
                 yield return cursor.item;
                 cursor = cursor.next;
             }
@@ -2363,10 +2362,10 @@ namespace C5
         /// <returns>True.</returns>
         public virtual bool Add(T item)
         {
-            updatecheck();
+            Updatecheck();
 
             insert(size, endsentinel, item);
-            (underlying ?? this).raiseForAdd(item);
+            (underlying ?? this).RaiseForAdd(item);
             return true;
 
         }
@@ -2532,10 +2531,10 @@ namespace C5
             return retval;
         }
 
-        string zeitem(Node node)
-        {
-            return node == null ? "(null node)" : node.item.ToString();
-        }
+        //string zeitem(Node node)
+        //{
+        //    return node == null ? "(null node)" : node.item.ToString();
+        //}
 
         /// <summary>
         /// Check the sanity of this list
@@ -2666,35 +2665,35 @@ namespace C5
 
         #region System.Collections.IList Members
 
-        Object System.Collections.IList.this[int index]
+        object System.Collections.IList.this[int index]
         {
             get { return this[index]; }
             set { this[index] = (T)value; }
         }
 
-        int System.Collections.IList.Add(Object o)
+        int System.Collections.IList.Add(object o)
         {
             bool added = Add((T)o);
             // What position to report if item not added? SC.IList.Add doesn't say
             return added ? Count - 1 : -1;
         }
 
-        bool System.Collections.IList.Contains(Object o)
+        bool System.Collections.IList.Contains(object o)
         {
             return Contains((T)o);
         }
 
-        int System.Collections.IList.IndexOf(Object o)
+        int System.Collections.IList.IndexOf(object o)
         {
             return Math.Max(-1, IndexOf((T)o));
         }
 
-        void System.Collections.IList.Insert(int index, Object o)
+        void System.Collections.IList.Insert(int index, object o)
         {
             Insert(index, (T)o);
         }
 
-        void System.Collections.IList.Remove(Object o)
+        void System.Collections.IList.Remove(object o)
         {
             Remove((T)o);
         }

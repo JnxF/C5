@@ -16,7 +16,7 @@ namespace C5
     {
         #region Fields
 
-        IQueue<T> queue;
+        readonly IQueue<T> queue;
 
         #endregion
 

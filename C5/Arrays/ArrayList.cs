@@ -36,7 +36,7 @@ namespace C5
         /// <summary>
         /// The size of the underlying list.
         /// </summary>
-        int underlyingsize { get { return (underlying ?? this).size; } }
+        int Underlyingsize { get { return (underlying ?? this).size; } }
 
         /// <summary>
         /// The underlying field of the FIFO property
@@ -190,13 +190,13 @@ namespace C5
         #endregion
         #region Util
 
-        bool equals(T i1, T i2) { return itemequalityComparer.Equals(i1, i2); }
+        bool Equals(T i1, T i2) { return itemequalityComparer.Equals(i1, i2); }
 
         /// <summary>
         /// Increment or decrement the private size fields
         /// </summary>
         /// <param name="delta">Increment (with sign)</param>
-        void addtosize(int delta)
+        void Addtosize(int delta)
         {
             size += delta;
             if (underlying != null)
@@ -207,8 +207,8 @@ namespace C5
         /// <summary>
         /// Double the size of the internal array.
         /// </summary>
-        protected override void expand()
-        { expand(2 * array.Length, underlyingsize); }
+        protected override void Expand()
+        { Expand(2 * array.Length, Underlyingsize); }
 
 
         /// <summary>
@@ -216,13 +216,13 @@ namespace C5
         /// </summary>
         /// <param name="newcapacity">The new capacity (will be rounded upwards to a power of 2).</param>
         /// <param name="newsize">The new count of </param>
-        protected override void expand(int newcapacity, int newsize)
+        protected override void Expand(int newcapacity, int newsize)
         {
             if (underlying != null)
-                underlying.expand(newcapacity, newsize);
+                underlying.Expand(newcapacity, newsize);
             else
             {
-                base.expand(newcapacity, newsize);
+                base.Expand(newcapacity, newsize);
                 if (views != null)
                     foreach (ArrayList<T> v in views)
                         v.array = array;
@@ -237,10 +237,10 @@ namespace C5
         /// </summary>
         /// <exception cref="ViewDisposedException"> If check fails by this list being a disposed view.</exception>
         /// <exception cref="ReadOnlyCollectionException"> If check fails by this being a read only list.</exception>
-        protected override void updatecheck()
+        protected override void Updatecheck()
         {
-            validitycheck();
-            base.updatecheck();
+            Validitycheck();
+            base.Updatecheck();
             if (underlying != null)
                 underlying.stamp++;
         }
@@ -252,7 +252,7 @@ namespace C5
         /// modification of the base collection.</para>
         /// </summary>
         /// <exception cref="ViewDisposedException"> if check fails.</exception>
-        void validitycheck()
+        void Validitycheck()
         {
             if (!isValid)
                 throw new ViewDisposedException();
@@ -266,9 +266,9 @@ namespace C5
         /// <exception cref="ViewDisposedException"> If check fails by this list being a disposed view.</exception>
         /// <exception cref="CollectionModifiedException">If the list *has* been updated since that  time..</exception>
         /// <param name="stamp">The stamp indicating the time.</param>
-        protected override void modifycheck(int stamp)
+        protected override void Modifycheck(int stamp)
         {
-            validitycheck();
+            Validitycheck();
             if (this.stamp != stamp)
                 throw new CollectionModifiedException();
         }
@@ -285,7 +285,7 @@ namespace C5
         int indexOf(T item)
         {
             for (int i = 0; i < size; i++)
-                if (equals(item, array[offsetField + i]))
+                if (Equals(item, array[offsetField + i]))
                     return i;
             return ~size;
         }
@@ -298,7 +298,7 @@ namespace C5
         int lastIndexOf(T item)
         {
             for (int i = size - 1; i >= 0; i--)
-                if (equals(item, array[offsetField + i]))
+                if (Equals(item, array[offsetField + i]))
                     return i;
             return ~size;
         }
@@ -313,19 +313,19 @@ namespace C5
         /// <param name="item">Item to insert</param>
         protected override void InsertProtected(int i, T item)
         {
-            baseinsert(i, item);
+            Baseinsert(i, item);
         }
 
-        private void baseinsert(int i, T item)
+        private void Baseinsert(int i, T item)
         {
-            if (underlyingsize == array.Length)
-                expand();
+            if (Underlyingsize == array.Length)
+                Expand();
             i += offsetField;
-            if (i < underlyingsize)
-                Array.Copy(array, i, array, i + 1, underlyingsize - i);
+            if (i < Underlyingsize)
+                Array.Copy(array, i, array, i + 1, Underlyingsize - i);
             array[i] = item;
-            addtosize(1);
-            fixViewsAfterInsert(1, i);
+            Addtosize(1);
+            FixViewsAfterInsert(1, i);
         }
         #endregion
 
@@ -339,12 +339,12 @@ namespace C5
         T removeAt(int i)
         {
             i += offsetField;
-            fixViewsBeforeSingleRemove(i);
+            FixViewsBeforeSingleRemove(i);
             T retval = array[i];
-            addtosize(-1);
-            if (underlyingsize > i)
-                Array.Copy(array, i + 1, array, i, underlyingsize - i);
-            array[underlyingsize] = default;
+            Addtosize(-1);
+            if (Underlyingsize > i)
+                Array.Copy(array, i + 1, array, i, Underlyingsize - i);
+            array[Underlyingsize] = default;
 
             return retval;
         }
@@ -361,7 +361,7 @@ namespace C5
         /// </summary>
         /// <param name="added">The actual number of inserted nodes</param>
         /// <param name="realInsertionIndex"></param>
-        void fixViewsAfterInsert(int added, int realInsertionIndex)
+        void FixViewsAfterInsert(int added, int realInsertionIndex)
         {
             if (views != null)
                 foreach (ArrayList<T> view in views)
@@ -376,7 +376,7 @@ namespace C5
                 }
         }
 
-        void fixViewsBeforeSingleRemove(int realRemovalIndex)
+        void FixViewsBeforeSingleRemove(int realRemovalIndex)
         {
             if (views != null)
                 foreach (ArrayList<T> view in views)
@@ -396,7 +396,7 @@ namespace C5
         /// </summary>
         /// <param name="start">the start of the interval relative to the array/underlying</param>
         /// <param name="count"></param>
-        void fixViewsBeforeRemove(int start, int count)
+        void FixViewsBeforeRemove(int start, int count)
         {
             int clearend = start + count - 1;
             if (views != null)
@@ -426,7 +426,7 @@ namespace C5
         /// <param name="otherOffset"></param>
         /// <param name="otherSize"></param>
         /// <returns>The position of View(otherOffset, otherSize) wrt. this view</returns>
-        MutualViewPosition viewPosition(int otherOffset, int otherSize)
+        MutualViewPosition ViewPosition(int otherOffset, int otherSize)
         {
             int end = offsetField + size, otherEnd = otherOffset + otherSize;
             if (otherOffset >= end || otherEnd <= offsetField)
@@ -439,14 +439,14 @@ namespace C5
         }
 
         //TODO: make version that fits the new, more forgiving rules for disposing
-        void disposeOverlappingViews(bool reverse)
+        void DisposeOverlappingViews(bool reverse)
         {
             if (views != null)
                 foreach (ArrayList<T> view in views)
                 {
                     if (view != this)
                     {
-                        switch (viewPosition(view.offsetField, view.size))
+                        switch (ViewPosition(view.offsetField, view.size))
                         {
                             case MutualViewPosition.ContainedIn:
                                 if (reverse)
@@ -497,8 +497,8 @@ namespace C5
         /// </summary>
         struct ViewHandler
         {
-            ArrayList<Position> leftEnds;
-            ArrayList<Position> rightEnds;
+            readonly ArrayList<Position> leftEnds;
+            readonly ArrayList<Position> rightEnds;
             int leftEndIndex, rightEndIndex;
             internal readonly int viewCount;
             internal ViewHandler(ArrayList<T> list)
@@ -528,7 +528,7 @@ namespace C5
             /// </summary>
             /// <param name="removed"></param>
             /// <param name="realindex"></param>
-            internal void skipEndpoints(int removed, int realindex)
+            internal void SkipEndpoints(int removed, int realindex)
             {
                 if (viewCount > 0)
                 {
@@ -547,7 +547,7 @@ namespace C5
                     }
                 }
             }
-            internal void updateViewSizesAndCounts(int removed, int realindex)
+            internal void UpdateViewSizesAndCounts(int removed, int realindex)
             {
                 if (viewCount > 0)
                 {
@@ -613,7 +613,7 @@ namespace C5
         {
             get
             {
-                validitycheck();
+                Validitycheck();
                 if (size == 0)
                     throw new NoSuchItemException();
 
@@ -630,7 +630,7 @@ namespace C5
         {
             get
             {
-                validitycheck();
+                Validitycheck();
                 if (size == 0)
                     throw new NoSuchItemException();
 
@@ -647,8 +647,8 @@ namespace C5
         /// start of the list, false if it removes from the end. The default for a new array list is false.</value>
         public virtual bool FIFO
         {
-            get { validitycheck(); return fIFO; }
-            set { updatecheck(); fIFO = value; }
+            get { Validitycheck(); return fIFO; }
+            set { Updatecheck(); fIFO = value; }
         }
 
         /// <summary>
@@ -656,7 +656,7 @@ namespace C5
         /// </summary>
         public virtual bool IsFixedSize
         {
-            get { validitycheck(); return false; }
+            get { Validitycheck(); return false; }
         }
 
         /// <summary>
@@ -670,7 +670,7 @@ namespace C5
         {
             get
             {
-                validitycheck();
+                Validitycheck();
                 if (index < 0 || index >= size)
                     throw new IndexOutOfRangeException();
 
@@ -678,7 +678,7 @@ namespace C5
             }
             set
             {
-                updatecheck();
+                Updatecheck();
                 if (index < 0 || index >= size)
                     throw new IndexOutOfRangeException();
                 index += offsetField;
@@ -686,7 +686,7 @@ namespace C5
 
                 array[index] = value;
 
-                (underlying ?? this).raiseForSetThis(index, value, item);
+                (underlying ?? this).RaiseForSetThis(index, value, item);
             }
         }
 
@@ -705,12 +705,12 @@ namespace C5
         /// <param name="item">The item to insert.</param>
         public virtual void Insert(int index, T item)
         {
-            updatecheck();
+            Updatecheck();
             if (index < 0 || index > size)
                 throw new IndexOutOfRangeException();
 
             InsertProtected(index, item);
-            (underlying ?? this).raiseForInsert(index + offsetField, item);
+            (underlying ?? this).RaiseForInsert(index + offsetField, item);
         }
 
         /// <summary>
@@ -745,17 +745,17 @@ namespace C5
         /// <param name="items">Items to insert</param>
         public virtual void InsertAll(int index, SCG.IEnumerable<T> items)
         {
-            updatecheck();
+            Updatecheck();
             if (index < 0 || index > size)
                 throw new IndexOutOfRangeException();
             index += offsetField;
             int toadd = countItems(items);
             if (toadd == 0)
                 return;
-            if (toadd + underlyingsize > array.Length)
-                expand(toadd + underlyingsize, underlyingsize);
-            if (underlyingsize > index)
-                Array.Copy(array, index, array, index + toadd, underlyingsize - index);
+            if (toadd + Underlyingsize > array.Length)
+                Expand(toadd + Underlyingsize, Underlyingsize);
+            if (Underlyingsize > index)
+                Array.Copy(array, index, array, index + toadd, Underlyingsize - index);
             int i = index;
             try
             {
@@ -770,29 +770,29 @@ namespace C5
                 int added = i - index;
                 if (added < toadd)
                 {
-                    Array.Copy(array, index + toadd, array, i, underlyingsize - index);
-                    Array.Clear(array, underlyingsize + added, toadd - added);
+                    Array.Copy(array, index + toadd, array, i, Underlyingsize - index);
+                    Array.Clear(array, Underlyingsize + added, toadd - added);
                 }
                 if (added > 0)
                 {
-                    addtosize(added);
+                    Addtosize(added);
 
-                    fixViewsAfterInsert(added, index);
-                    (underlying ?? this).raiseForInsertAll(index, added);
+                    FixViewsAfterInsert(added, index);
+                    (underlying ?? this).RaiseForInsertAll(index, added);
                 }
             }
         }
-        private void raiseForInsertAll(int index, int added)
+        private void RaiseForInsertAll(int index, int added)
         {
             if (ActiveEvents != 0)
             {
                 if ((ActiveEvents & (EventTypeEnum.Added | EventTypeEnum.Inserted)) != 0)
                     for (int j = index; j < index + added; j++)
                     {
-                        raiseItemInserted(array[j], j);
-                        raiseItemsAdded(array[j], 1);
+                        RaiseItemInserted(array[j], j);
+                        RaiseItemsAdded(array[j], 1);
                     }
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
             }
         }
 
@@ -802,9 +802,9 @@ namespace C5
         /// <param name="item">The item to insert.</param>
         public virtual void InsertFirst(T item)
         {
-            updatecheck();
+            Updatecheck();
             InsertProtected(0, item);
-            (underlying ?? this).raiseForInsert(offsetField, item);
+            (underlying ?? this).RaiseForInsert(offsetField, item);
         }
 
         /// <summary>
@@ -813,9 +813,9 @@ namespace C5
         /// <param name="item">The item to insert.</param>
         public virtual void InsertLast(T item)
         {
-            updatecheck();
+            Updatecheck();
             InsertProtected(size, item);
-            (underlying ?? this).raiseForInsert(size - 1 + offsetField, item);
+            (underlying ?? this).RaiseForInsert(size - 1 + offsetField, item);
         }
 
 
@@ -829,7 +829,7 @@ namespace C5
         /// <returns>The new list.</returns>
         public virtual IList<T> FindAll(Func<T, bool> filter)
         {
-            validitycheck();
+            Validitycheck();
             int stamp = this.stamp;
             ArrayList<T> res = new ArrayList<T>(itemequalityComparer);
             int j = 0, rescap = res.array.Length;
@@ -837,10 +837,10 @@ namespace C5
             {
                 T a = array[offsetField + i];
                 bool found = filter(a);
-                modifycheck(stamp);
+                Modifycheck(stamp);
                 if (found)
                 {
-                    if (j == rescap) res.expand(rescap = 2 * rescap, j);
+                    if (j == rescap) res.Expand(rescap = 2 * rescap, j);
                     res.array[j++] = a;
                 }
             }
@@ -859,11 +859,11 @@ namespace C5
         /// <returns>The new list.</returns>
         public virtual IList<V> Map<V>(Func<T, V> mapper)
         {
-            validitycheck();
+            Validitycheck();
 
             ArrayList<V> res = new ArrayList<V>(size);
 
-            return map<V>(mapper, res);
+            return Map<V>(mapper, res);
         }
 
         /// <summary>
@@ -877,21 +877,21 @@ namespace C5
         /// <returns>The new list.</returns>
         public virtual IList<V> Map<V>(Func<T, V> mapper, SCG.IEqualityComparer<V> itemequalityComparer)
         {
-            validitycheck();
+            Validitycheck();
 
             ArrayList<V> res = new ArrayList<V>(size, itemequalityComparer);
 
-            return map<V>(mapper, res);
+            return Map<V>(mapper, res);
         }
 
-        private IList<V> map<V>(Func<T, V> mapper, ArrayList<V> res)
+        private IList<V> Map<V>(Func<T, V> mapper, ArrayList<V> res)
         {
             int stamp = this.stamp;
             if (size > 0)
                 for (int i = 0; i < size; i++)
                 {
                     V mappeditem = mapper(array[offsetField + i]);
-                    modifycheck(stamp);
+                    Modifycheck(stamp);
 
                     res.array[i] = mappeditem;
                 }
@@ -907,12 +907,12 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T Remove()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 throw new NoSuchItemException("List is empty");
 
             T item = removeAt(fIFO ? 0 : size - 1);
-            (underlying ?? this).raiseForRemove(item);
+            (underlying ?? this).RaiseForRemove(item);
             return item;
         }
 
@@ -923,12 +923,12 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T RemoveFirst()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 throw new NoSuchItemException("List is empty");
 
             T item = removeAt(0);
-            (underlying ?? this).raiseForRemoveAt(offsetField, item);
+            (underlying ?? this).RaiseForRemoveAt(offsetField, item);
             return item;
         }
 
@@ -940,12 +940,12 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T RemoveLast()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 throw new NoSuchItemException("List is empty");
 
             T item = removeAt(size - 1);
-            (underlying ?? this).raiseForRemoveAt(size + offsetField, item);
+            (underlying ?? this).RaiseForRemoveAt(size + offsetField, item);
             return item;
         }
 
@@ -959,8 +959,8 @@ namespace C5
         /// <returns>The new list view.</returns>
         public virtual IList<T> View(int start, int count)
         {
-            validitycheck();
-            checkRange(start, count);
+            Validitycheck();
+            CheckRange(start, count);
             if (views == null)
                 views = new WeakViewList<ArrayList<T>>();
             ArrayList<T> retval = (ArrayList<T>)MemberwiseClone();
@@ -1072,14 +1072,14 @@ namespace C5
         /// <returns></returns>
         public virtual bool TrySlide(int offset, int size)
         {
-            updatecheck();
+            Updatecheck();
             if (underlying == null)
                 throw new NotAViewException("Not a view");
 
             int newoffset = this.offsetField + offset;
             int newsize = size;
 
-            if (newoffset < 0 || newsize < 0 || newoffset + newsize > underlyingsize)
+            if (newoffset < 0 || newsize < 0 || newoffset + newsize > Underlyingsize)
                 return false;
 
             this.offsetField = newoffset;
@@ -1108,7 +1108,7 @@ namespace C5
         /// </summary>
         public virtual void Reverse()
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             for (int i = 0, length = size / 2, end = offsetField + size - 1; i < length; i++)
@@ -1120,8 +1120,8 @@ namespace C5
             }
 
             //TODO: be more forgiving wrt. disposing
-            disposeOverlappingViews(true);
-            (underlying ?? this).raiseCollectionChanged();
+            DisposeOverlappingViews(true);
+            (underlying ?? this).RaiseCollectionChanged();
         }
 
         /// <summary>
@@ -1139,7 +1139,7 @@ namespace C5
         /// <returns>True if the list is sorted, else false.</returns>
         public virtual bool IsSorted(SCG.IComparer<T> c)
         {
-            validitycheck();
+            Validitycheck();
             for (int i = offsetField + 1, end = offsetField + size; i < end; i++)
                 if (c.Compare(array[i - 1], array[i]) > 0)
                     return false;
@@ -1165,13 +1165,13 @@ namespace C5
         /// <param name="comparer">The comparer defining the sorting order.</param>
         public virtual void Sort(SCG.IComparer<T> comparer)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             Sorting.IntroSort<T>(array, offsetField, size, comparer);
-            disposeOverlappingViews(false);
+            DisposeOverlappingViews(false);
 
-            (underlying ?? this).raiseCollectionChanged();
+            (underlying ?? this).RaiseCollectionChanged();
         }
 
 
@@ -1187,7 +1187,7 @@ namespace C5
         /// <param name="rnd">The random source.</param>
         public virtual void Shuffle(Random rnd)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             for (int i = offsetField, top = offsetField + size, end = top - 1; i < end; i++)
@@ -1200,9 +1200,9 @@ namespace C5
                     array[j] = tmp;
                 }
             }
-            disposeOverlappingViews(false);
+            DisposeOverlappingViews(false);
 
-            (underlying ?? this).raiseCollectionChanged();
+            (underlying ?? this).RaiseCollectionChanged();
         }
         #endregion
 
@@ -1213,7 +1213,7 @@ namespace C5
         /// </summary>
         /// <param name="item">Item to search for.</param>
         /// <returns>Index of item from start.</returns>
-        public virtual int IndexOf(T item) { validitycheck(); return indexOf(item); }
+        public virtual int IndexOf(T item) { Validitycheck(); return indexOf(item); }
 
 
         /// <summary>
@@ -1221,7 +1221,7 @@ namespace C5
         /// </summary>
         /// <param name="item">Item to search for.</param>
         /// <returns>Index of item from the end.</returns>
-        public virtual int LastIndexOf(T item) { validitycheck(); return lastIndexOf(item); }
+        public virtual int LastIndexOf(T item) { Validitycheck(); return lastIndexOf(item); }
 
 
         /// <summary>
@@ -1233,12 +1233,12 @@ namespace C5
         /// <returns>The removed item.</returns>
         public virtual T RemoveAt(int index)
         {
-            updatecheck();
+            Updatecheck();
             if (index < 0 || index >= size)
                 throw new IndexOutOfRangeException("Index out of range for sequenced collection");
 
             T item = removeAt(index);
-            (underlying ?? this).raiseForRemoveAt(offsetField + index, item);
+            (underlying ?? this).RaiseForRemoveAt(offsetField + index, item);
             return item;
         }
 
@@ -1252,25 +1252,25 @@ namespace C5
         /// <param name="count">The number of items to remove.</param>
         public virtual void RemoveInterval(int start, int count)
         {
-            updatecheck();
+            Updatecheck();
             if (count == 0)
                 return;
-            checkRange(start, count);
+            CheckRange(start, count);
             start += offsetField;
-            fixViewsBeforeRemove(start, count);
+            FixViewsBeforeRemove(start, count);
 
-            Array.Copy(array, start + count, array, start, underlyingsize - start - count);
-            addtosize(-count);
-            Array.Clear(array, underlyingsize, count);
+            Array.Copy(array, start + count, array, start, Underlyingsize - start - count);
+            Addtosize(-count);
+            Array.Clear(array, Underlyingsize, count);
 
-            (underlying ?? this).raiseForRemoveInterval(start, count);
+            (underlying ?? this).RaiseForRemoveInterval(start, count);
         }
-        void raiseForRemoveInterval(int start, int count)
+        void RaiseForRemoveInterval(int start, int count)
         {
             if (ActiveEvents != 0)
             {
-                raiseCollectionCleared(size == 0, count, start);
-                raiseCollectionChanged();
+                RaiseCollectionCleared(size == 0, count, start);
+                RaiseCollectionChanged();
             }
         }
         #endregion
@@ -1296,7 +1296,7 @@ namespace C5
         /// </summary>
         /// <returns></returns>
         public override int GetUnsequencedHashCode()
-        { validitycheck(); return base.GetUnsequencedHashCode(); }
+        { Validitycheck(); return base.GetUnsequencedHashCode(); }
 
         /// <summary>
         /// 
@@ -1304,7 +1304,7 @@ namespace C5
         /// <param name="that"></param>
         /// <returns></returns>
         public override bool UnsequencedEquals(ICollection<T> that)
-        { validitycheck(); return base.UnsequencedEquals(that); }
+        { Validitycheck(); return base.UnsequencedEquals(that); }
 
         /// <summary>
         /// Check if this collection contains (an item equivalent to according to the
@@ -1313,7 +1313,7 @@ namespace C5
         /// <param name="item">The value to check for.</param>
         /// <returns>True if the items is in this collection.</returns>
         public virtual bool Contains(T item)
-        { validitycheck(); return indexOf(item) >= 0; }
+        { Validitycheck(); return indexOf(item) >= 0; }
 
 
         /// <summary>
@@ -1325,7 +1325,7 @@ namespace C5
         /// <returns>True if the items is in this collection.</returns>
         public virtual bool Find(ref T item)
         {
-            validitycheck();
+            Validitycheck();
 
             int i;
 
@@ -1360,7 +1360,7 @@ namespace C5
         /// <returns></returns>
         public virtual bool Update(T item, out T olditem)
         {
-            updatecheck();
+            Updatecheck();
             int i;
 
             if ((i = indexOf(item)) >= 0)
@@ -1368,7 +1368,7 @@ namespace C5
                 olditem = array[offsetField + i];
                 array[offsetField + i] = item;
 
-                (underlying ?? this).raiseForUpdate(item, olditem);
+                (underlying ?? this).RaiseForUpdate(item, olditem);
                 return true;
             }
 
@@ -1385,7 +1385,7 @@ namespace C5
         /// <returns>True if the item was found (hence not added).</returns>
         public virtual bool FindOrAdd(ref T item)
         {
-            updatecheck();
+            Updatecheck();
             if (Find(ref item))
                 return true;
 
@@ -1404,7 +1404,7 @@ namespace C5
         /// <returns>True if the item was found and hence updated.</returns>
         public virtual bool UpdateOrAdd(T item)
         {
-            updatecheck();
+            Updatecheck();
             if (Update(item))
                 return true;
 
@@ -1420,7 +1420,7 @@ namespace C5
         /// <returns></returns>
         public virtual bool UpdateOrAdd(T item, out T olditem)
         {
-            updatecheck();
+            Updatecheck();
             if (Update(item, out olditem))
                 return true;
 
@@ -1438,7 +1438,7 @@ namespace C5
         /// <returns>True if the item was found (and removed).</returns>
         public virtual bool Remove(T item)
         {
-            updatecheck();
+            Updatecheck();
 
             int i = fIFO ? indexOf(item) : lastIndexOf(item);
 
@@ -1446,7 +1446,7 @@ namespace C5
                 return false;
 
             T removeditem = removeAt(i);
-            (underlying ?? this).raiseForRemove(removeditem);
+            (underlying ?? this).RaiseForRemove(removeditem);
             return true;
         }
 
@@ -1463,7 +1463,7 @@ namespace C5
         /// <returns>True if the item was found (and removed).</returns>
         public virtual bool Remove(T item, out T removeditem)
         {
-            updatecheck();
+            Updatecheck();
 
             int i = fIFO ? indexOf(item) : lastIndexOf(item);
 
@@ -1474,7 +1474,7 @@ namespace C5
             }
 
             removeditem = removeAt(i);
-            (underlying ?? this).raiseForRemove(removeditem);
+            (underlying ?? this).RaiseForRemove(removeditem);
             return true;
         }
 
@@ -1487,7 +1487,7 @@ namespace C5
         /// <param name="items">The items to remove.</param>
         public virtual void RemoveAll(SCG.IEnumerable<T> items)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             //TODO: reactivate the old code for small sizes
@@ -1512,7 +1512,7 @@ namespace C5
                     array[j] = item;
                     i++; j++;
                 }
-                viewHandler.skipEndpoints(removed, i);
+                viewHandler.SkipEndpoints(removed, i);
                 //Remove a stretch of nodes
                 while (i < end && toremove.Remove(item = array[i]))
                 {
@@ -1520,15 +1520,15 @@ namespace C5
                         raiseHandler.Remove(item);
                     removed++;
                     i++;
-                    viewHandler.updateViewSizesAndCounts(removed, i);
+                    viewHandler.UpdateViewSizesAndCounts(removed, i);
                 }
             }
             if (removed == 0)
                 return;
-            viewHandler.updateViewSizesAndCounts(removed, underlyingsize);
-            Array.Copy(array, offsetField + size, array, j, underlyingsize - offsetField - size);
-            addtosize(-removed);
-            Array.Clear(array, underlyingsize, removed);
+            viewHandler.UpdateViewSizesAndCounts(removed, Underlyingsize);
+            Array.Copy(array, offsetField + size, array, j, Underlyingsize - offsetField - size);
+            Addtosize(-removed);
+            Array.Clear(array, Underlyingsize, removed);
 
             if (mustFire)
                 raiseHandler.Raise();
@@ -1538,55 +1538,55 @@ namespace C5
         /// 
         /// </summary>
         /// <param name="predicate"></param>
-        void RemoveAll(Func<T, bool> predicate)
-        {
-            updatecheck();
-            if (size == 0)
-                return;
-            RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
-            bool mustFire = raiseHandler.MustFire;
-            ViewHandler viewHandler = new ViewHandler(this);
-            int j = offsetField;
-            int removed = 0;
-            int i = offsetField, end = offsetField + size;
+        //void RemoveAll(Func<T, bool> predicate)
+        //{
+        //    Updatecheck();
+        //    if (size == 0)
+        //        return;
+        //    RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
+        //    bool mustFire = raiseHandler.MustFire;
+        //    ViewHandler viewHandler = new ViewHandler(this);
+        //    int j = offsetField;
+        //    int removed = 0;
+        //    int i = offsetField, end = offsetField + size;
 
-            while (i < end)
-            {
-                T item;
-                //pass by a stretch of nodes
-                while (i < end && !predicate(item = array[i]))
-                {
-                    updatecheck();
+        //    while (i < end)
+        //    {
+        //        T item;
+        //        //pass by a stretch of nodes
+        //        while (i < end && !predicate(item = array[i]))
+        //        {
+        //            Updatecheck();
 
-                    //if (j<i)
-                    array[j] = item;
-                    i++; j++;
-                }
-                updatecheck();
-                viewHandler.skipEndpoints(removed, i);
-                //Remove a stretch of nodes
-                while (i < end && predicate(item = array[i]))
-                {
-                    updatecheck();
+        //            //if (j<i)
+        //            array[j] = item;
+        //            i++; j++;
+        //        }
+        //        Updatecheck();
+        //        viewHandler.SkipEndpoints(removed, i);
+        //        //Remove a stretch of nodes
+        //        while (i < end && predicate(item = array[i]))
+        //        {
+        //            Updatecheck();
 
-                    if (mustFire)
-                        raiseHandler.Remove(item);
-                    removed++;
-                    i++;
-                    viewHandler.updateViewSizesAndCounts(removed, i);
-                }
-                updatecheck();
-            }
-            if (removed == 0)
-                return;
-            viewHandler.updateViewSizesAndCounts(removed, underlyingsize);
-            Array.Copy(array, offsetField + size, array, j, underlyingsize - offsetField - size);
-            addtosize(-removed);
-            Array.Clear(array, underlyingsize, removed);
+        //            if (mustFire)
+        //                raiseHandler.Remove(item);
+        //            removed++;
+        //            i++;
+        //            viewHandler.UpdateViewSizesAndCounts(removed, i);
+        //        }
+        //        Updatecheck();
+        //    }
+        //    if (removed == 0)
+        //        return;
+        //    viewHandler.UpdateViewSizesAndCounts(removed, Underlyingsize);
+        //    Array.Copy(array, offsetField + size, array, j, Underlyingsize - offsetField - size);
+        //    Addtosize(-removed);
+        //    Array.Clear(array, Underlyingsize, removed);
 
-            if (mustFire)
-                raiseHandler.Raise();
-        }
+        //    if (mustFire)
+        //        raiseHandler.Raise();
+        //}
 
         /// <summary>
         /// Remove all items from this collection, resetting internal array size.
@@ -1595,15 +1595,15 @@ namespace C5
         {
             if (underlying == null)
             {
-                updatecheck();
+                Updatecheck();
                 if (size == 0)
                     return;
                 int oldsize = size;
-                fixViewsBeforeRemove(0, size);
+                FixViewsBeforeRemove(0, size);
 
                 array = new T[8];
                 size = 0;
-                (underlying ?? this).raiseForRemoveInterval(offsetField, oldsize);
+                (underlying ?? this).RaiseForRemoveInterval(offsetField, oldsize);
             }
             else
                 RemoveInterval(0, size);
@@ -1616,7 +1616,7 @@ namespace C5
         /// <param name="items">The items to retain.</param>
         public virtual void RetainAll(SCG.IEnumerable<T> items)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             HashBag<T> toretain = new HashBag<T>(itemequalityComparer);
@@ -1643,7 +1643,7 @@ namespace C5
                     array[j] = item;
                     i++; j++;
                 }
-                viewHandler.skipEndpoints(removed, i);
+                viewHandler.SkipEndpoints(removed, i);
                 //Remove a stretch of nodes
                 while (i < end && !toretain.Contains(item = array[i]))
                 {
@@ -1651,15 +1651,15 @@ namespace C5
                         raiseHandler.Remove(item);
                     removed++;
                     i++;
-                    viewHandler.updateViewSizesAndCounts(removed, i);
+                    viewHandler.UpdateViewSizesAndCounts(removed, i);
                 }
             }
             if (removed == 0)
                 return;
-            viewHandler.updateViewSizesAndCounts(removed, underlyingsize);
-            Array.Copy(array, offsetField + size, array, j, underlyingsize - offsetField - size);
-            addtosize(-removed);
-            Array.Clear(array, underlyingsize, removed);
+            viewHandler.UpdateViewSizesAndCounts(removed, Underlyingsize);
+            Array.Copy(array, offsetField + size, array, j, Underlyingsize - offsetField - size);
+            Addtosize(-removed);
+            Array.Clear(array, Underlyingsize, removed);
 
             raiseHandler.Raise();
         }
@@ -1668,54 +1668,54 @@ namespace C5
         /// 
         /// </summary>
         /// <param name="predicate"></param>
-        void RetainAll(Func<T, bool> predicate)
-        {
-            updatecheck();
-            if (size == 0)
-                return;
-            RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
-            bool mustFire = raiseHandler.MustFire;
-            ViewHandler viewHandler = new ViewHandler(this);
-            int j = offsetField;
-            int removed = 0;
-            int i = offsetField, end = offsetField + size;
+        //void RetainAll(Func<T, bool> predicate)
+        //{
+        //    Updatecheck();
+        //    if (size == 0)
+        //        return;
+        //    RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
+        //    bool mustFire = raiseHandler.MustFire;
+        //    ViewHandler viewHandler = new ViewHandler(this);
+        //    int j = offsetField;
+        //    int removed = 0;
+        //    int i = offsetField, end = offsetField + size;
 
-            while (i < end)
-            {
-                T item;
-                //pass by a stretch of nodes
-                while (i < end && predicate(item = array[i]))
-                {
-                    updatecheck();
+        //    while (i < end)
+        //    {
+        //        T item;
+        //        //pass by a stretch of nodes
+        //        while (i < end && predicate(item = array[i]))
+        //        {
+        //            Updatecheck();
 
-                    //if (j<i)
-                    array[j] = item;
-                    i++; j++;
-                }
-                updatecheck();
-                viewHandler.skipEndpoints(removed, i);
-                //Remove a stretch of nodes
-                while (i < end && !predicate(item = array[i]))
-                {
-                    updatecheck();
+        //            //if (j<i)
+        //            array[j] = item;
+        //            i++; j++;
+        //        }
+        //        Updatecheck();
+        //        viewHandler.SkipEndpoints(removed, i);
+        //        //Remove a stretch of nodes
+        //        while (i < end && !predicate(item = array[i]))
+        //        {
+        //            Updatecheck();
 
-                    if (mustFire)
-                        raiseHandler.Remove(item);
-                    removed++;
-                    i++;
-                    viewHandler.updateViewSizesAndCounts(removed, i);
-                }
-                updatecheck();
-            }
-            if (removed == 0)
-                return;
-            viewHandler.updateViewSizesAndCounts(removed, underlyingsize);
-            Array.Copy(array, offsetField + size, array, j, underlyingsize - offsetField - size);
-            addtosize(-removed);
-            Array.Clear(array, underlyingsize, removed);
+        //            if (mustFire)
+        //                raiseHandler.Remove(item);
+        //            removed++;
+        //            i++;
+        //            viewHandler.UpdateViewSizesAndCounts(removed, i);
+        //        }
+        //        Updatecheck();
+        //    }
+        //    if (removed == 0)
+        //        return;
+        //    viewHandler.UpdateViewSizesAndCounts(removed, Underlyingsize);
+        //    Array.Copy(array, offsetField + size, array, j, Underlyingsize - offsetField - size);
+        //    Addtosize(-removed);
+        //    Array.Clear(array, Underlyingsize, removed);
 
-            raiseHandler.Raise();
-        }
+        //    raiseHandler.Raise();
+        //}
 
 
         /// <summary>
@@ -1727,7 +1727,7 @@ namespace C5
         /// <returns>True if all values in <code>items</code>is in this collection.</returns>
         public virtual bool ContainsAll(SCG.IEnumerable<T> items)
         {
-            validitycheck();
+            Validitycheck();
 
             //TODO: use aux hash bag to obtain linear time procedure
             HashBag<T> tomatch = new HashBag<T>(itemequalityComparer);
@@ -1752,11 +1752,11 @@ namespace C5
         /// <returns>The number of copies found.</returns>
         public virtual int ContainsCount(T item)
         {
-            validitycheck();
+            Validitycheck();
 
             int count = 0;
             for (int i = 0; i < size; i++)
-                if (equals(item, array[offsetField + i]))
+                if (Equals(item, array[offsetField + i]))
                     count++;
             return count;
         }
@@ -1793,7 +1793,7 @@ namespace C5
         /// <param name="item">The value to remove.</param>
         public virtual void RemoveAllCopies(T item)
         {
-            updatecheck();
+            Updatecheck();
             if (size == 0)
                 return;
             RaiseForRemoveAllHandler raiseHandler = new RaiseForRemoveAllHandler(underlying ?? this);
@@ -1805,25 +1805,25 @@ namespace C5
             while (i < end)
             {
                 //pass by a stretch of nodes
-                while (i < end && !equals(item, array[i]))
+                while (i < end && !Equals(item, array[i]))
                     array[j++] = array[i++];
-                viewHandler.skipEndpoints(removed, i);
+                viewHandler.SkipEndpoints(removed, i);
                 //Remove a stretch of nodes
-                while (i < end && equals(item, array[i]))
+                while (i < end && Equals(item, array[i]))
                 {
                     if (mustFire)
                         raiseHandler.Remove(array[i]);
                     removed++;
                     i++;
-                    viewHandler.updateViewSizesAndCounts(removed, i);
+                    viewHandler.UpdateViewSizesAndCounts(removed, i);
                 }
             }
             if (removed == 0)
                 return;
-            viewHandler.updateViewSizesAndCounts(removed, underlyingsize);
-            Array.Copy(array, offsetField + size, array, j, underlyingsize - offsetField - size);
-            addtosize(-removed);
-            Array.Clear(array, underlyingsize, removed);
+            viewHandler.UpdateViewSizesAndCounts(removed, Underlyingsize);
+            Array.Copy(array, offsetField + size, array, j, Underlyingsize - offsetField - size);
+            Addtosize(-removed);
+            Array.Clear(array, Underlyingsize, removed);
             raiseHandler.Raise();
         }
 
@@ -1837,15 +1837,15 @@ namespace C5
         {
             bool retval = true;
 
-            if (underlyingsize > array.Length)
+            if (Underlyingsize > array.Length)
             {
                 Logger.Log(string.Format("underlyingsize ({0}) > array.Length ({1})", size, array.Length));
                 return false;
             }
 
-            if (offsetField + size > underlyingsize)
+            if (offsetField + size > Underlyingsize)
             {
-                Logger.Log(string.Format("offset({0})+size({1}) > underlyingsize ({2})", offsetField, size, underlyingsize));
+                Logger.Log(string.Format("offset({0})+size({1}) > underlyingsize ({2})", offsetField, size, Underlyingsize));
                 return false;
             }
 
@@ -1855,7 +1855,7 @@ namespace C5
                 return false;
             }
 
-            for (int i = 0; i < underlyingsize; i++)
+            for (int i = 0; i < Underlyingsize; i++)
             {
                 if ((object)(array[i]) == null)
                 {
@@ -1864,9 +1864,9 @@ namespace C5
                 }
             }
 
-            for (int i = underlyingsize, length = array.Length; i < length; i++)
+            for (int i = Underlyingsize, length = array.Length; i < length; i++)
             {
-                if (!equals(array[i], default))
+                if (!Equals(array[i], default))
                 {
                     Logger.Log(string.Format("Bad element: != default(T) at (base)index {0}", i));
                     retval = false;
@@ -1925,11 +1925,11 @@ namespace C5
         /// <returns>True</returns>
         public virtual bool Add(T item)
         {
-            updatecheck();
+            Updatecheck();
 
-            baseinsert(size, item);
+            Baseinsert(size, item);
 
-            (underlying ?? this).raiseForAdd(item);
+            (underlying ?? this).RaiseForAdd(item);
             return true;
         }
 
@@ -1940,17 +1940,17 @@ namespace C5
         /// <param name="items"></param>
         public virtual void AddAll(SCG.IEnumerable<T> items)
         {
-            updatecheck();
+            Updatecheck();
             int toadd = countItems(items);
             if (toadd == 0)
                 return;
 
-            if (toadd + underlyingsize > array.Length)
-                expand(toadd + underlyingsize, underlyingsize);
+            if (toadd + Underlyingsize > array.Length)
+                Expand(toadd + Underlyingsize, Underlyingsize);
 
             int i = size + offsetField;
-            if (underlyingsize > i)
-                Array.Copy(array, i, array, i + toadd, underlyingsize - i);
+            if (Underlyingsize > i)
+                Array.Copy(array, i, array, i + toadd, Underlyingsize - i);
             try
             {
                 foreach (T item in items)
@@ -1963,23 +1963,23 @@ namespace C5
                 int added = i - size - offsetField;
                 if (added < toadd)
                 {
-                    Array.Copy(array, size + offsetField + toadd, array, i, underlyingsize - size - offsetField);
-                    Array.Clear(array, underlyingsize + added, toadd - added);
+                    Array.Copy(array, size + offsetField + toadd, array, i, Underlyingsize - size - offsetField);
+                    Array.Clear(array, Underlyingsize + added, toadd - added);
                 }
                 if (added > 0)
                 {
-                    addtosize(added);
-                    fixViewsAfterInsert(added, i - added);
-                    (underlying ?? this).raiseForAddAll(i - added, added);
+                    Addtosize(added);
+                    FixViewsAfterInsert(added, i - added);
+                    (underlying ?? this).RaiseForAddAll(i - added, added);
                 }
             }
         }
-        private void raiseForAddAll(int start, int added)
+        private void RaiseForAddAll(int start, int added)
         {
             if ((ActiveEvents & EventTypeEnum.Added) != 0)
                 for (int i = start, end = start + added; i < end; i++)
-                    raiseItemsAdded(array[i], 1);
-            raiseCollectionChanged();
+                    RaiseItemsAdded(array[i], 1);
+            RaiseCollectionChanged();
         }
 
         #endregion
@@ -2002,7 +2002,7 @@ namespace C5
         /// 
         /// </summary>
         /// <value>The number of items in this collection</value>
-        public override int Count { get { validitycheck(); return size; } }
+        public override int Count { get { Validitycheck(); return size; } }
         #endregion
 
         #region IEnumerable<T> Members
@@ -2013,7 +2013,7 @@ namespace C5
         /// <returns>The enumerator</returns>
         public override SCG.IEnumerator<T> GetEnumerator()
         {
-            validitycheck();
+            Validitycheck();
             return base.GetEnumerator();
         }
         #endregion
@@ -2156,7 +2156,7 @@ namespace C5
         }
 
         [Obsolete]
-        Object System.Collections.ICollection.SyncRoot
+        object System.Collections.ICollection.SyncRoot
         {
             get { return underlying != null ? ((System.Collections.ICollection)underlying).SyncRoot : array; }
         }
@@ -2174,35 +2174,35 @@ namespace C5
 
         #region System.Collections.IList Members
 
-        Object System.Collections.IList.this[int index]
+        object System.Collections.IList.this[int index]
         {
             get { return this[index]; }
             set { this[index] = (T)value; }
         }
 
-        int System.Collections.IList.Add(Object o)
+        int System.Collections.IList.Add(object o)
         {
             bool added = Add((T)o);
             // What position to report if item not added? SC.IList.Add doesn't say
             return added ? Count - 1 : -1;
         }
 
-        bool System.Collections.IList.Contains(Object o)
+        bool System.Collections.IList.Contains(object o)
         {
             return Contains((T)o);
         }
 
-        int System.Collections.IList.IndexOf(Object o)
+        int System.Collections.IList.IndexOf(object o)
         {
             return Math.Max(-1, IndexOf((T)o));
         }
 
-        void System.Collections.IList.Insert(int index, Object o)
+        void System.Collections.IList.Insert(int index, object o)
         {
             Insert(index, (T)o);
         }
 
-        void System.Collections.IList.Remove(Object o)
+        void System.Collections.IList.Remove(object o)
         {
             Remove((T)o);
         }

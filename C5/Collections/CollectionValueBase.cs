@@ -25,7 +25,7 @@ namespace C5
         /// <value></value>
         public virtual EventTypeEnum ActiveEvents { get { return eventBlock == null ? 0 : eventBlock.events; } }
 
-        private void checkWillListen(EventTypeEnum eventType)
+        private void CheckWillListen(EventTypeEnum eventType)
         {
             if ((ListenableEvents & eventType) == 0)
                 throw new UnlistenableEventException();
@@ -36,10 +36,10 @@ namespace C5
         /// </summary>
         public virtual event CollectionChangedHandler<T> CollectionChanged
         {
-            add { checkWillListen(EventTypeEnum.Changed); (eventBlock ?? (eventBlock = new EventBlock<T>())).CollectionChanged += value; }
+            add { CheckWillListen(EventTypeEnum.Changed); (eventBlock ?? (eventBlock = new EventBlock<T>())).CollectionChanged += value; }
             remove
             {
-                checkWillListen(EventTypeEnum.Changed);
+                CheckWillListen(EventTypeEnum.Changed);
                 if (eventBlock != null)
                 {
                     eventBlock.CollectionChanged -= value;
@@ -50,7 +50,7 @@ namespace C5
         /// <summary>
         /// Fire the CollectionChanged event
         /// </summary>
-        protected virtual void raiseCollectionChanged()
+        protected virtual void RaiseCollectionChanged()
         { if (eventBlock != null) eventBlock.raiseCollectionChanged(this); }
 
         /// <summary>
@@ -58,10 +58,10 @@ namespace C5
         /// </summary>
         public virtual event CollectionClearedHandler<T> CollectionCleared
         {
-            add { checkWillListen(EventTypeEnum.Cleared); (eventBlock ?? (eventBlock = new EventBlock<T>())).CollectionCleared += value; }
+            add { CheckWillListen(EventTypeEnum.Cleared); (eventBlock ?? (eventBlock = new EventBlock<T>())).CollectionCleared += value; }
             remove
             {
-                checkWillListen(EventTypeEnum.Cleared);
+                CheckWillListen(EventTypeEnum.Cleared);
                 if (eventBlock != null)
                 {
                     eventBlock.CollectionCleared -= value;
@@ -72,13 +72,13 @@ namespace C5
         /// <summary>
         /// Fire the CollectionCleared event
         /// </summary>
-        protected virtual void raiseCollectionCleared(bool full, int count)
+        protected virtual void RaiseCollectionCleared(bool full, int count)
         { if (eventBlock != null) eventBlock.raiseCollectionCleared(this, full, count); }
 
         /// <summary>
         /// Fire the CollectionCleared event
         /// </summary>
-        protected virtual void raiseCollectionCleared(bool full, int count, int? offset)
+        protected virtual void RaiseCollectionCleared(bool full, int count, int? offset)
         { if (eventBlock != null) eventBlock.raiseCollectionCleared(this, full, count, offset); }
 
         /// <summary>
@@ -86,10 +86,10 @@ namespace C5
         /// </summary>
         public virtual event ItemsAddedHandler<T> ItemsAdded
         {
-            add { checkWillListen(EventTypeEnum.Added); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemsAdded += value; }
+            add { CheckWillListen(EventTypeEnum.Added); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemsAdded += value; }
             remove
             {
-                checkWillListen(EventTypeEnum.Added);
+                CheckWillListen(EventTypeEnum.Added);
                 if (eventBlock != null)
                 {
                     eventBlock.ItemsAdded -= value;
@@ -102,7 +102,7 @@ namespace C5
         /// </summary>
         /// <param name="item">The item that was added</param>
         /// <param name="count"></param>
-        protected virtual void raiseItemsAdded(T item, int count)
+        protected virtual void RaiseItemsAdded(T item, int count)
         { if (eventBlock != null) eventBlock.raiseItemsAdded(this, item, count); }
 
         /// <summary>
@@ -110,10 +110,10 @@ namespace C5
         /// </summary>
         public virtual event ItemsRemovedHandler<T> ItemsRemoved
         {
-            add { checkWillListen(EventTypeEnum.Removed); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemsRemoved += value; }
+            add { CheckWillListen(EventTypeEnum.Removed); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemsRemoved += value; }
             remove
             {
-                checkWillListen(EventTypeEnum.Removed);
+                CheckWillListen(EventTypeEnum.Removed);
                 if (eventBlock != null)
                 {
                     eventBlock.ItemsRemoved -= value;
@@ -126,7 +126,7 @@ namespace C5
         /// </summary>
         /// <param name="item">The item that was removed</param>
         /// <param name="count"></param>
-        protected virtual void raiseItemsRemoved(T item, int count)
+        protected virtual void RaiseItemsRemoved(T item, int count)
         { if (eventBlock != null) eventBlock.raiseItemsRemoved(this, item, count); }
 
         /// <summary>
@@ -134,10 +134,10 @@ namespace C5
         /// </summary>
         public virtual event ItemInsertedHandler<T> ItemInserted
         {
-            add { checkWillListen(EventTypeEnum.Inserted); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemInserted += value; }
+            add { CheckWillListen(EventTypeEnum.Inserted); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemInserted += value; }
             remove
             {
-                checkWillListen(EventTypeEnum.Inserted);
+                CheckWillListen(EventTypeEnum.Inserted);
                 if (eventBlock != null)
                 {
                     eventBlock.ItemInserted -= value;
@@ -150,7 +150,7 @@ namespace C5
         /// </summary>
         /// <param name="item">The item that was added</param>
         /// <param name="index"></param>
-        protected virtual void raiseItemInserted(T item, int index)
+        protected virtual void RaiseItemInserted(T item, int index)
         { if (eventBlock != null) eventBlock.raiseItemInserted(this, item, index); }
 
         /// <summary>
@@ -158,10 +158,10 @@ namespace C5
         /// </summary>
         public virtual event ItemRemovedAtHandler<T> ItemRemovedAt
         {
-            add { checkWillListen(EventTypeEnum.RemovedAt); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemRemovedAt += value; }
+            add { CheckWillListen(EventTypeEnum.RemovedAt); (eventBlock ?? (eventBlock = new EventBlock<T>())).ItemRemovedAt += value; }
             remove
             {
-                checkWillListen(EventTypeEnum.RemovedAt);
+                CheckWillListen(EventTypeEnum.RemovedAt);
                 if (eventBlock != null)
                 {
                     eventBlock.ItemRemovedAt -= value;
@@ -174,7 +174,7 @@ namespace C5
         /// </summary>
         /// <param name="item">The item that was removed</param>
         /// <param name="index"></param>
-        protected virtual void raiseItemRemovedAt(T item, int index)
+        protected virtual void RaiseItemRemovedAt(T item, int index)
         { if (eventBlock != null) eventBlock.raiseItemRemovedAt(this, item, index); }
 
         #region Event support for IList
@@ -184,15 +184,15 @@ namespace C5
         /// <param name="index"></param>
         /// <param name="value"></param>
         /// <param name="item"></param>
-        protected virtual void raiseForSetThis(int index, T value, T item)
+        protected virtual void RaiseForSetThis(int index, T value, T item)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemsRemoved(item, 1);
-                raiseItemRemovedAt(item, index);
-                raiseItemsAdded(value, 1);
-                raiseItemInserted(value, index);
-                raiseCollectionChanged();
+                RaiseItemsRemoved(item, 1);
+                RaiseItemRemovedAt(item, index);
+                RaiseItemsAdded(value, 1);
+                RaiseItemInserted(value, index);
+                RaiseCollectionChanged();
             }
         }
         /// <summary>
@@ -200,13 +200,13 @@ namespace C5
         /// </summary>
         /// <param name="i"></param>
         /// <param name="item"></param>
-        protected virtual void raiseForInsert(int i, T item)
+        protected virtual void RaiseForInsert(int i, T item)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemInserted(item, i);
-                raiseItemsAdded(item, 1);
-                raiseCollectionChanged();
+                RaiseItemInserted(item, i);
+                RaiseItemsAdded(item, 1);
+                RaiseCollectionChanged();
             }
         }
 
@@ -214,12 +214,12 @@ namespace C5
         /// 
         /// </summary>
         /// <param name="item"></param>
-        protected void raiseForRemove(T item)
+        protected void RaiseForRemove(T item)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemsRemoved(item, 1);
-                raiseCollectionChanged();
+                RaiseItemsRemoved(item, 1);
+                RaiseCollectionChanged();
             }
         }
 
@@ -228,12 +228,12 @@ namespace C5
         /// </summary>
         /// <param name="item"></param>
         /// <param name="count"></param>
-        protected void raiseForRemove(T item, int count)
+        protected void RaiseForRemove(T item, int count)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemsRemoved(item, count);
-                raiseCollectionChanged();
+                RaiseItemsRemoved(item, count);
+                RaiseCollectionChanged();
             }
         }
 
@@ -242,13 +242,13 @@ namespace C5
         /// </summary>
         /// <param name="index"></param>
         /// <param name="item"></param>
-        protected void raiseForRemoveAt(int index, T item)
+        protected void RaiseForRemoveAt(int index, T item)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemRemovedAt(item, index);
-                raiseItemsRemoved(item, 1);
-                raiseCollectionChanged();
+                RaiseItemRemovedAt(item, index);
+                RaiseItemsRemoved(item, 1);
+                RaiseCollectionChanged();
             }
         }
 
@@ -260,13 +260,13 @@ namespace C5
         /// </summary>
         /// <param name="newitem"></param>
         /// <param name="olditem"></param>
-        protected virtual void raiseForUpdate(T newitem, T olditem)
+        protected virtual void RaiseForUpdate(T newitem, T olditem)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemsRemoved(olditem, 1);
-                raiseItemsAdded(newitem, 1);
-                raiseCollectionChanged();
+                RaiseItemsRemoved(olditem, 1);
+                RaiseItemsAdded(newitem, 1);
+                RaiseCollectionChanged();
             }
         }
         /// <summary>
@@ -275,38 +275,38 @@ namespace C5
         /// <param name="newitem"></param>
         /// <param name="olditem"></param>
         /// <param name="count"></param>
-        protected virtual void raiseForUpdate(T newitem, T olditem, int count)
+        protected virtual void RaiseForUpdate(T newitem, T olditem, int count)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemsRemoved(olditem, count);
-                raiseItemsAdded(newitem, count);
-                raiseCollectionChanged();
+                RaiseItemsRemoved(olditem, count);
+                RaiseItemsAdded(newitem, count);
+                RaiseCollectionChanged();
             }
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="item"></param>
-        protected virtual void raiseForAdd(T item)
+        protected virtual void RaiseForAdd(T item)
         {
             if (ActiveEvents != 0)
             {
-                raiseItemsAdded(item, 1);
-                raiseCollectionChanged();
+                RaiseItemsAdded(item, 1);
+                RaiseCollectionChanged();
             }
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="wasRemoved"></param>
-        protected virtual void raiseForRemoveAll(ICollectionValue<T> wasRemoved)
+        protected virtual void RaiseForRemoveAll(ICollectionValue<T> wasRemoved)
         {
             if ((ActiveEvents & EventTypeEnum.Removed) != 0)
                 foreach (T item in wasRemoved)
-                    raiseItemsRemoved(item, 1);
+                    RaiseItemsRemoved(item, 1);
             if (wasRemoved != null && wasRemoved.Count > 0)
-                raiseCollectionChanged();
+                RaiseCollectionChanged();
         }
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace C5
         [Serializable]
         protected class RaiseForRemoveAllHandler
         {
-            CollectionValueBase<T> collection;
+            readonly CollectionValueBase<T> collection;
             CircularQueue<T> wasRemoved;
             bool wasChanged = false;
 
@@ -330,7 +330,7 @@ namespace C5
                 MustFire = (collection.ActiveEvents & (EventTypeEnum.Removed | EventTypeEnum.Changed)) != 0;
             }
 
-            bool mustFireRemoved;
+            readonly bool mustFireRemoved;
             /// <summary>
             /// 
             /// </summary>
@@ -359,9 +359,9 @@ namespace C5
             {
                 if (wasRemoved != null)
                     foreach (T item in wasRemoved)
-                        collection.raiseItemsRemoved(item, 1);
+                        collection.RaiseItemsRemoved(item, 1);
                 if (wasChanged)
-                    collection.raiseCollectionChanged();
+                    collection.RaiseCollectionChanged();
             }
         }
         #endregion

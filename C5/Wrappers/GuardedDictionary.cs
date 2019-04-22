@@ -15,7 +15,7 @@ namespace C5
     {
         #region Fields
 
-        IDictionary<K, V> dict;
+        readonly IDictionary<K, V> dict;
 
         #endregion
 

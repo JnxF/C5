@@ -33,9 +33,8 @@ namespace C5
         }
 
         int stamp;
-
-        SCG.IComparer<T> comparer;
-        SCG.IEqualityComparer<T> itemequalityComparer;
+        readonly SCG.IComparer<T> comparer;
+        readonly SCG.IEqualityComparer<T> itemequalityComparer;
 
         Interval[] heap;
 
@@ -325,8 +324,8 @@ namespace C5
             stamp++;
             if (add(null, item))
             {
-                raiseItemsAdded(item, 1);
-                raiseCollectionChanged();
+                RaiseItemsAdded(item, 1);
+                RaiseCollectionChanged();
                 return true;
             }
             return false;
@@ -422,8 +421,8 @@ namespace C5
             {
                 if ((ActiveEvents & EventTypeEnum.Added) != 0)
                     foreach (T item in items)
-                        raiseItemsAdded(item, 1);
-                raiseCollectionChanged();
+                        RaiseItemsAdded(item, 1);
+                RaiseCollectionChanged();
             }
         }
 
@@ -675,8 +674,8 @@ namespace C5
                     throw new InvalidPriorityQueueHandleException("Handle not valid for reuse");
             if (add(myhandle, item))
             {
-                raiseItemsAdded(item, 1);
-                raiseCollectionChanged();
+                RaiseItemsAdded(item, 1);
+                RaiseCollectionChanged();
                 return true;
             }
             return false;
@@ -769,8 +768,8 @@ namespace C5
                     bubbleUpMax(cell);
             }
 
-            raiseItemsRemoved(retval, 1);
-            raiseCollectionChanged();
+            RaiseItemsRemoved(retval, 1);
+            RaiseCollectionChanged();
 
             return retval;
         }
@@ -843,9 +842,9 @@ namespace C5
                     bubbleUpMax(cell);
             }
 
-            raiseItemsRemoved(retval, 1);
-            raiseItemsAdded(item, 1);
-            raiseCollectionChanged();
+            RaiseItemsRemoved(retval, 1);
+            RaiseItemsAdded(item, 1);
+            RaiseCollectionChanged();
 
             return retval;
         }
@@ -929,8 +928,8 @@ namespace C5
                 heapifyMin(0);
             }
 
-            raiseItemsRemoved(retval, 1);
-            raiseCollectionChanged();
+            RaiseItemsRemoved(retval, 1);
+            RaiseCollectionChanged();
             return retval;
 
         }
@@ -984,8 +983,8 @@ namespace C5
                 size--;
                 heapifyMax(0);
             }
-            raiseItemsRemoved(retval, 1);
-            raiseCollectionChanged();
+            RaiseItemsRemoved(retval, 1);
+            RaiseCollectionChanged();
             handle = myhandle;
             return retval;
         }

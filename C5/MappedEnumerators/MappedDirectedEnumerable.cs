@@ -8,7 +8,9 @@ namespace C5
     [Serializable]
     abstract class MappedDirectedEnumerable<T, V> : EnumerableBase<V>, IDirectedEnumerable<V>
     {
+#pragma warning disable IDE0044 // Add readonly modifier
         IDirectedEnumerable<T> directedenumerable;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         abstract public V Map(T item);
 
